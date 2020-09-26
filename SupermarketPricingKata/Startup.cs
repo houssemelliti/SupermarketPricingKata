@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SupermarketPricingKata.Repositories;
 using SupermarketPricingKata.Services;
 
 namespace SupermarketPricingKata
@@ -29,6 +30,7 @@ namespace SupermarketPricingKata
             });
 
             services.AddTransient<ICheckoutService, CheckoutService>();
+            services.AddTransient<ICheckoutRepository, CheckoutRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
