@@ -77,5 +77,23 @@ namespace SupermarketPricingKataTest
             // adding an item with SKU = 10 and expecting to get an exeption since there is no product with this SKU
             Assert.Throws<ArgumentException>(() => service.AddItemToCheckout(10, 1, null));
         }
+
+        /// <summary>
+        /// Verify that ArgumentOutOfRangeException is thrown when an item 
+        /// with zero or negative price is added to the checkout
+        /// </summary>
+        [Fact]
+        public void Test_ExceptionWhenItemWithoutPrice()
+        {
+            var service = Subject();
+            // Setup CheckoutRepository mock to add a product with zero price to the checkout
+            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product 
+            { 
+                Sku = 1, 
+                UnitPrice = 0, 
+                MeasurmentUnit = MeasurmentUnits.LITRE 
+            });
+            Assert.Throws<ArgumentOutOfRangeException>(() => service.AddItemToCheckout(1, 1, null));
+        }
     }
 }
