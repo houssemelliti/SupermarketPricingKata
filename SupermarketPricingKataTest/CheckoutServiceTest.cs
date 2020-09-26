@@ -113,5 +113,19 @@ namespace SupermarketPricingKataTest
             // Check exeption is thrown when adding an item with zero quantity
             Assert.Throws<ArgumentOutOfRangeException>(() => service.AddItemToCheckout(1, 0, null));
         }
+
+        /// <summary>
+        /// Verify that ArgumentException is thrown when adding an item to the checkout
+        /// where the item is sold by unit and the quantity is a floating decimal number.
+        /// </summary>
+        [Fact]
+        public void Test_ExceptionWhenDecimalQuantityForProductSoldByNumber()
+        {
+            var service = Subject();
+            // Setup mock repository to return an item with measurment unit UNIT (item is sold by number)
+            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product { Sku = 1, UnitPrice = 5, MeasurmentUnit = MeasurmentUnits.UNIT });
+            // Try to add the item to the checkout with a 2.5 quantity
+            Assert.Throws<ArgumentException>(() => service.AddItemToCheckout(1, 2.5m, null));
+        }
     }
 }
