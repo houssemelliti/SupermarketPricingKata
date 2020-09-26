@@ -65,5 +65,16 @@ namespace SupermarketPricingKataTest
             // Performing the service call to add 4 Bread items to the checkout
             service.AddItemToCheckout(1, 4, null);
         }
+
+        /// <summary>
+        /// Verify that ArgumentException is thrown when trying to add an item
+        /// with SKU pointing to a non-existing product.
+        /// </summary>
+        [Fact]
+        public void Test_ExceptionWhenInvalidSKU()
+        {
+            var service = Subject();
+            Assert.Throws<ArgumentException>(() => service.AddItemToCheckout(10, 1, null));
+        }
     }
 }
