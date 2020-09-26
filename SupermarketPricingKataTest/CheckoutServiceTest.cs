@@ -127,5 +127,34 @@ namespace SupermarketPricingKataTest
             // Try to add the item to the checkout with a 2.5 quantity
             Assert.Throws<ArgumentException>(() => service.AddItemToCheckout(1, 2.5m, null));
         }
+
+        /// <summary>
+        /// Verify that we can remove an item from the checkout
+        /// </summary>
+        [Fact]
+        public void Test_CanRemoveItemFromCheckout()
+        {
+            var service = Subject();
+
+            // Test item to add then to remove from checkout
+            var item = new CheckoutItem
+            {
+                Product = new Product { Sku = 1 },
+                Quantity = 4
+            };
+
+            // First setup mock object and add the item to the checkout
+            _checkoutRepoMock.Setup(r => r.GetCheckoutItem(1)).Returns(item);
+            service.AddItemToCheckout(1, 4, null);
+
+            // Then setup the mock for Remove operation and perform delete through the service
+            _checkoutRepoMock.Setup(r => r.DeleteItem(It.IsAny<CheckoutItem>()))
+                .Callback<CheckoutItem>((element) => _checkoutItems.Remove(element));
+
+            service.DeleteItemFromCheckout(1);
+
+            // Verify that the service called the repository mock object
+            _checkoutRepoMock.Verify(r => r.DeleteItem(item)); 
+        }
     }
 }
