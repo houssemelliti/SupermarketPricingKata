@@ -95,5 +95,23 @@ namespace SupermarketPricingKataTest
             });
             Assert.Throws<ArgumentOutOfRangeException>(() => service.AddItemToCheckout(1, 1, null));
         }
+
+        /// <summary>
+        /// Verify that ArgumentOutOfRangeException is thrown when checkout item
+        /// is added with zero or negative quantity
+        /// </summary>
+        [Fact]
+        public void Test_ExceptionWhenQuantityIsNegativeOrZero()
+        {
+            var service = Subject();
+            // Mock getting a product from repository
+            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product { Sku = 1, UnitPrice = 5, MeasurmentUnit = MeasurmentUnits.POUND });
+            
+            // Check exeption is thrown when adding an item with negative quantity
+            Assert.Throws<ArgumentOutOfRangeException>(() => service.AddItemToCheckout(1, -3, null));
+            
+            // Check exeption is thrown when adding an item with zero quantity
+            Assert.Throws<ArgumentOutOfRangeException>(() => service.AddItemToCheckout(1, 0, null));
+        }
     }
 }
