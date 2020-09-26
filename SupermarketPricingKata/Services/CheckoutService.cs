@@ -32,6 +32,11 @@ namespace SupermarketPricingKata.Services
                 throw new ArgumentOutOfRangeException("Cannot add a product with invalid price");
             }
 
+            if (quantity <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Cannot add a product with negative or zero quantity");
+            }
+
             // Then add a "quantity" of this product to the list of 
             // checkout items if all the checking conditions are met
             _checkoutRepo.AddItem(product, quantity, discountRule);
