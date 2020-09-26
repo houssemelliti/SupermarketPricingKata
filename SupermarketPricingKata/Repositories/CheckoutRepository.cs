@@ -22,7 +22,7 @@ namespace SupermarketPricingKata.Repositories
 
         public bool DeleteItem(CheckoutItem item)
         {
-            throw new NotImplementedException();
+            return _checkoutItems.Remove(item);
         }
 
         public CheckoutItem GetCheckoutItem(int sku)

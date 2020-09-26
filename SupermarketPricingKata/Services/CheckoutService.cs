@@ -49,7 +49,8 @@ namespace SupermarketPricingKata.Services
 
         public bool DeleteItemFromCheckout(int sku)
         {
-            throw new NotImplementedException();
+            var item = _checkoutRepo.GetCheckoutItem(sku); // Get the item by SKU from repository
+            return _checkoutRepo.DeleteItem(item);
         }
 
         public decimal CalculateTotal()
