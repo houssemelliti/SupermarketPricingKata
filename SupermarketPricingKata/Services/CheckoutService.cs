@@ -37,12 +37,9 @@ namespace SupermarketPricingKata.Services
                 throw new ArgumentOutOfRangeException("Cannot add a product with negative or zero quantity");
             }
 
-            if (product.MeasurmentUnit == MeasurmentUnits.UNIT)
+            if (product.MeasurmentUnit == MeasurmentUnits.UNIT && quantity != Math.Round(quantity))
             {
-                if (quantity != Math.Round(quantity))
-                {
-                    throw new ArgumentException("Cannot add product sold by number with a floating decimal quantity");
-                }
+                throw new ArgumentException("Cannot add product sold by number with a floating decimal quantity");
             }
 
             // Finally add a "quantity" of this product to the list of 
