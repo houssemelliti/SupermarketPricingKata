@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SupermarketPricingKata.Repositories
 {
-    public class ProductRepository: IProductsRepository
+    public class ProductsRepository: IProductsRepository
     {
         // Predefined list of products used as an example
         // This could be later replaced by a database connection

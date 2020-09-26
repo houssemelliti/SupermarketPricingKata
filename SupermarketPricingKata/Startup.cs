@@ -31,6 +31,7 @@ namespace SupermarketPricingKata
 
             services.AddTransient<ICheckoutService, CheckoutService>();
             services.AddTransient<ICheckoutRepository, CheckoutRepository>();
+            services.AddTransient<IProductsRepository, ProductsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

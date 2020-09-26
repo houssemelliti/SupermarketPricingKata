@@ -13,29 +13,19 @@ namespace SupermarketPricingKataTest
     /// </summary>
     public class CheckoutServiceTest
     {
-        private Mock<ICheckoutRepository> _checkoutRepoMock; // Mock object representing the CheckoutRepository
-        private Mock<IProductsRepository> _productsRepoMock; // Mock object representing the ProductsRepository
+        private readonly Mock<ICheckoutRepository> _checkoutRepoMock; // Mock object representing the CheckoutRepository
+        private readonly Mock<IProductsRepository> _productsRepoMock; // Mock object representing the ProductsRepository
         private readonly List<CheckoutItem> _checkoutItems = new List<CheckoutItem>(); // A list of checkout items used by mock objects
 
         /// <summary>
-        /// Verify that we can add an item to the checkout.
+        /// Test class constructor.
+        /// Used to initiate mock objects
         /// </summary>
-        [Fact]
-        public void Test_CanAddItemToCheckout()
+        public CheckoutServiceTest()
         {
-            // Initializing mock and service objects
+            // Initializing mock objects
             _checkoutRepoMock = new Mock<ICheckoutRepository>();
             _productsRepoMock = new Mock<IProductsRepository>();
-            var service = new CheckoutService(_checkoutRepoMock.Object, _productsRepoMock.Object);
-
-            // Setting-up the ProductsRepository mock object to imitate getting a product
-            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product
-            {
-                Sku = 1,
-                Name = "Bread",
-                UnitPrice = 0.4m,
-                MeasurmentUnit = MeasurmentUnits.UNIT
-            });
 
             // Setting-up the CheckoutRepository mock object to imitate adding a CheckoutItem object to the list
             _checkoutRepoMock.Setup(r => r.AddItem(It.IsAny<Product>(), It.IsAny<decimal>(), It.IsAny<DiscountRule>()))
@@ -46,6 +36,32 @@ namespace SupermarketPricingKataTest
                     _checkoutItems.Add(checkoutItem);
                 });
 
+            // Setting-up the ProductsRepository mock object to imitate getting an exapmle product
+            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product
+            {
+                Sku = 1,
+                Name = "Bread",
+                UnitPrice = 0.4m,
+                MeasurmentUnit = MeasurmentUnits.UNIT
+            });
+        }
+
+        /// <summary>
+        /// Initiates the CheckoutService by dependency injection.
+        /// </summary>
+        /// <returns>An instance of the <see cref="CheckoutService"/>.</returns>
+        private CheckoutService Subject()
+        {
+            return new CheckoutService(_checkoutRepoMock.Object, _productsRepoMock.Object);
+        }
+
+        /// <summary>
+        /// Verify that we can add an item to the checkout.
+        /// </summary>
+        [Fact]
+        public void Test_CanAddItemToCheckout()
+        {
+            var service = Subject();
             // Performing the service call to add 4 Bread items to the checkout
             service.AddItemToCheckout(1, 4, null);
         }

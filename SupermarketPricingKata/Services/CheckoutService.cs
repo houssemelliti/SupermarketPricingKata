@@ -10,10 +10,11 @@ namespace SupermarketPricingKata.Services
         private readonly ICheckoutRepository _checkoutRepo;
         private readonly IProductsRepository _productsRepo;
 
-        public CheckoutService(ICheckoutRepository checkoutRepo, IProductsRepository itemsRepo)
+        // Using dependency injection to inject the repositories to the service.
+        public CheckoutService(ICheckoutRepository checkoutRepo, IProductsRepository productsRepo)
         {
             _checkoutRepo = checkoutRepo;
-            _productsRepo = itemsRepo;
+            _productsRepo = productsRepo;
         }
 
         public void AddItemToCheckout(int sku, decimal quantity, DiscountRule discountRule)
