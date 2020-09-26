@@ -74,6 +74,7 @@ namespace SupermarketPricingKataTest
         public void Test_ExceptionWhenInvalidSKU()
         {
             var service = Subject();
+            // adding an item with SKU = 10 and expecting to get an exeption since there is no product with this SKU
             Assert.Throws<ArgumentException>(() => service.AddItemToCheckout(10, 1, null));
         }
     }

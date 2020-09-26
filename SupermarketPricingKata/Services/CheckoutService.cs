@@ -21,7 +21,12 @@ namespace SupermarketPricingKata.Services
         {
             // First get the product with the corresponding SKU from repository 
             var product = _productsRepo.GetProduct(sku);
-            
+
+            if (product == null)
+            {
+                throw new ArgumentException($"Cannot find product with SKU : {sku}");
+            }
+
             // Then add a "quantity" of this product to the list of checkout items
             _checkoutRepo.AddItem(product, quantity, discountRule);
         }
