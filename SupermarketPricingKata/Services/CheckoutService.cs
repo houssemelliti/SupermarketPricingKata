@@ -27,7 +27,13 @@ namespace SupermarketPricingKata.Services
                 throw new ArgumentException($"Cannot find product with SKU : {sku}");
             }
 
-            // Then add a "quantity" of this product to the list of checkout items
+            if (product.UnitPrice <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Cannot add a product with invalid price");
+            }
+
+            // Then add a "quantity" of this product to the list of 
+            // checkout items if all the checking conditions are met
             _checkoutRepo.AddItem(product, quantity, discountRule);
         }
 
