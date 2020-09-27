@@ -302,5 +302,25 @@ namespace SupermarketPricingKataTest
             // and total price to be calculated properly
             Assert.Equal(9.86m, service.CalculateTotal());
         }
+
+        /// <summary>
+        /// Verify that ArgumentOutOfRangeException is thrown when attepting  
+        /// to add an item to the checkout with negative or zero discounted quantity.
+        /// </summary>
+        [Fact]
+        public void Test_ExpetionWhenDiscountQuantityIsNegativeOrZero()
+        {
+            var service = Subject();
+
+            // Adding 8 Bread items to the checkout with rule "Three for a dollar"
+            // The discount quantity is set to zero
+            service.AddItemToCheckout(1, 8, new DiscountRule
+            {
+                Description = "Buy Three for a Dollar",
+                Quantity = 0,
+                Price = 1
+            });
+            Assert.Throws<ArgumentOutOfRangeException>(() => service.CalculateTotal());
+        }
     }
 }
