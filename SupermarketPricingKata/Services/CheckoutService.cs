@@ -17,6 +17,11 @@ namespace SupermarketPricingKata.Services
             _productsRepo = productsRepo;
         }
 
+        public IList<CheckoutItem> GetCheckoutItems()
+        {
+            return _checkoutRepo.GetCheckoutItems();
+        }
+
         public void AddItemToCheckout(int sku, decimal quantity, DiscountRule discountRule)
         {
             // First get the product with the corresponding SKU from repository 
@@ -73,11 +78,6 @@ namespace SupermarketPricingKata.Services
             }
             // Prices are rounded to 2 decimals
             return Math.Round(totalPrice, 2);
-        }
-
-        public IList<CheckoutItem> GetCheckoutItems()
-        {
-            throw new NotImplementedException();
         }
 
         private decimal CalculateTotalForItemWithDiscount(CheckoutItem item)
