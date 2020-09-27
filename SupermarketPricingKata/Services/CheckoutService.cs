@@ -55,7 +55,15 @@ namespace SupermarketPricingKata.Services
 
         public decimal CalculateTotal()
         {
-            return 4m;
+            IList<CheckoutItem> checkoutItems = _checkoutRepo.GetCheckoutItems();
+
+            var totalPrice = 0m;
+            foreach (var item in checkoutItems)
+            {
+                totalPrice += item.Price;
+            }
+            // Prices are rounded to 2 decimals
+            return Math.Round(totalPrice, 2);
         }
 
         public IList<CheckoutItem> GetCheckoutItems()

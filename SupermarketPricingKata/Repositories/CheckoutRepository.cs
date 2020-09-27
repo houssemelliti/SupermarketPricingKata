@@ -27,12 +27,12 @@ namespace SupermarketPricingKata.Repositories
 
         public CheckoutItem GetCheckoutItem(int sku)
         {
-            throw new NotImplementedException();
+            return _checkoutItems.SingleOrDefault(c => c.Product.Sku == sku);
         }
 
         public IList<CheckoutItem> GetCheckoutItems()
         {
-            throw new NotImplementedException();
+            return _checkoutItems.ToList();
         }
     }
 }

@@ -40,6 +40,9 @@ namespace SupermarketPricingKataTest
             _checkoutRepoMock.Setup(r => r.DeleteItem(It.IsAny<CheckoutItem>()))
                 .Callback<CheckoutItem>((element) => _checkoutItems.Remove(element));
 
+            // Setup CheckoutRepository mock to return the list of checkout items
+            _checkoutRepoMock.Setup(r => r.GetCheckoutItems()).Returns(_checkoutItems);
+
             // Setting-up the ProductsRepository mock object to imitate getting an exapmle product with SKU = 1
             _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product
             {
@@ -189,7 +192,7 @@ namespace SupermarketPricingKataTest
         {
             var service = Subject();
 
-            // $1.99/pound (so what does 4 ounces cost?)
+            // item with SKU = 3 costs $1.99/pound (so what does 4 ounces cost?)
             // 4 oz is equal to 0.25 lb
             service.AddItemToCheckout(3, 0.25m, null);
 
