@@ -96,7 +96,7 @@ namespace SupermarketPricingKataTest
 
         /// <summary>
         /// Verify that ArgumentOutOfRangeException is thrown when an item 
-        /// with zero or negative price is added to the checkout
+        /// with zero or negative price is added to the checkout.
         /// </summary>
         [Fact]
         public void Test_ExceptionWhenItemWithoutPrice()
@@ -114,7 +114,7 @@ namespace SupermarketPricingKataTest
 
         /// <summary>
         /// Verify that ArgumentOutOfRangeException is thrown when checkout item
-        /// is added with zero or negative quantity
+        /// is added with zero or negative quantity.
         /// </summary>
         [Fact]
         public void Test_ExceptionWhenQuantityIsNegativeOrZero()
@@ -145,7 +145,7 @@ namespace SupermarketPricingKataTest
         }
 
         /// <summary>
-        /// Verify that we can remove an item from the checkout
+        /// Verify that we can remove an item from the checkout.
         /// </summary>
         [Fact]
         public void Test_CanRemoveItemFromCheckout()
@@ -173,7 +173,7 @@ namespace SupermarketPricingKataTest
 
         /// <summary>
         /// Verify that the total is calculated properly 
-        /// for a single item in checkout
+        /// for a single item in checkout.
         /// </summary>
         [Fact]
         public void Test_CanCalculateTotalSingleItemPerNumber()
@@ -185,7 +185,7 @@ namespace SupermarketPricingKataTest
 
         /// <summary>
         /// Verify that total price is calculated properly
-        /// for items sold per weight
+        /// for items sold per weight.
         /// </summary>
         [Fact]
         public void Test_CanCalculateTotalSingleItemPerWeight()
@@ -198,6 +198,31 @@ namespace SupermarketPricingKataTest
 
             // We expect 4 oz price to be equal to $0.5
             Assert.Equal(0.5m, service.CalculateTotal());
+        }
+
+        /// <summary>
+        /// Verify that total price is calculated properly for 
+        /// a checkout containing multiple items.
+        /// </summary>
+        [Fact]
+        public void Test_CanCalculateCorrectTotalMultipleItems()
+        {
+            var service = Subject();
+
+            service.AddItemToCheckout(1, 2, null); // 2 Bread items
+
+            service.AddItemToCheckout(3, 0.5m, null); // 0,5 lb of Apples
+
+            _productsRepoMock.Setup(r => r.GetProduct(4)).Returns(new Product
+            {
+                Sku = 4,
+                Name = "Milk",
+                MeasurmentUnit = MeasurmentUnits.LITRE,
+                UnitPrice = 1.25m
+            });
+            service.AddItemToCheckout(4, 3, null); // 3L of Milk
+
+            Assert.Equal(5.54m, service.CalculateTotal());
         }
     }
 }
