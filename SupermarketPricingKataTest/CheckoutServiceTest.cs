@@ -16,6 +16,28 @@ namespace SupermarketPricingKataTest
         private readonly Mock<ICheckoutRepository> _checkoutRepoMock; // Mock object representing the CheckoutRepository
         private readonly Mock<IProductsRepository> _productsRepoMock; // Mock object representing the ProductsRepository
         private readonly List<CheckoutItem> _checkoutItems = new List<CheckoutItem>(); // A list of checkout items used by mock objects
+        
+        // A list containing examples of discount rules that can be applied
+        private List<DiscountRule> discountRules = new List<DiscountRule>
+        {
+            new DiscountRule
+            {
+                Description = "Buy Three for a Dollar",
+                Quantity = 3,
+                Price = 1
+            },
+            new DiscountRule
+            {
+                Description = "Buy two, get one free",
+                Quantity = 3,
+                Price = 2
+            },
+            new DiscountRule
+            {
+                Description = "80% OFF",
+                Quantity = 1
+            }
+        };
 
         /// <summary>
         /// Test class constructor.
@@ -60,6 +82,15 @@ namespace SupermarketPricingKataTest
                 Name = "Apples",
                 UnitPrice = 1.99m,
                 MeasurmentUnit = MeasurmentUnits.POUND
+            });
+
+            // Setting-up the ProductsRepository mock object to imitate getting an exapmle product with SKU = 4
+            _productsRepoMock.Setup(r => r.GetProduct(4)).Returns(new Product
+            {
+                Sku = 4,
+                Name = "Milk",
+                MeasurmentUnit = MeasurmentUnits.LITRE,
+                UnitPrice = 1.25m
             });
         }
 
@@ -121,9 +152,7 @@ namespace SupermarketPricingKataTest
         public void Test_ExceptionWhenQuantityIsNegativeOrZero()
         {
             var service = Subject();
-            // Mock getting a product from repository
-            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product { Sku = 1, UnitPrice = 5, MeasurmentUnit = MeasurmentUnits.POUND });
-            
+
             // Check exeption is thrown when adding an item with negative quantity
             Assert.Throws<ArgumentOutOfRangeException>(() => service.AddItemToCheckout(1, -3, null));
             
@@ -139,8 +168,7 @@ namespace SupermarketPricingKataTest
         public void Test_ExceptionWhenDecimalQuantityForProductSoldByNumber()
         {
             var service = Subject();
-            // Setup mock repository to return an item with measurment unit UNIT (item is sold by number)
-            _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product { Sku = 1, UnitPrice = 5, MeasurmentUnit = MeasurmentUnits.UNIT });
+            // Testing with an item with SKU = 1 with measurment unit UNIT (item is sold by number) 
             // Try to add the item to the checkout with a 2.5 quantity
             Assert.Throws<ArgumentException>(() => service.AddItemToCheckout(1, 2.5m, null));
         }
@@ -211,16 +239,7 @@ namespace SupermarketPricingKataTest
             var service = Subject();
 
             service.AddItemToCheckout(1, 2, null); // 2 Bread items
-
             service.AddItemToCheckout(3, 0.5m, null); // 0,5 lb of Apples
-
-            _productsRepoMock.Setup(r => r.GetProduct(4)).Returns(new Product
-            {
-                Sku = 4,
-                Name = "Milk",
-                MeasurmentUnit = MeasurmentUnits.LITRE,
-                UnitPrice = 1.25m
-            });
             service.AddItemToCheckout(4, 3, null); // 3L of Milk
 
             Assert.Equal(5.54m, service.CalculateTotal());
@@ -235,12 +254,7 @@ namespace SupermarketPricingKataTest
             var service = Subject();
 
             // Adding 8 Bread items with unit price $0.4 to the checkout with rule "Three for a dollar"
-            service.AddItemToCheckout(1, 8, new DiscountRule
-            {
-                Description = "Buy Three for a Dollar",
-                Quantity = 3,
-                Price = 1
-            });
+            service.AddItemToCheckout(1, 8, discountRules[0]);
             // Verify that 6 bread items are subject to discount with rule "Three for a dollar"
             // and 2 items are excluded from discount
             Assert.Equal(2.8m, service.CalculateTotal());
@@ -257,12 +271,7 @@ namespace SupermarketPricingKataTest
             var service = Subject();
 
             // Adding 4 Bread items to the checkout list with rule "Three for a dollar"
-            service.AddItemToCheckout(1, 4, new DiscountRule
-            {
-                Description = "Buy Three for a Dollar",
-                Quantity = 3,
-                Price = 1
-            });
+            service.AddItemToCheckout(1, 4, discountRules[0]);
 
             var apples = new Product
             {
@@ -274,12 +283,10 @@ namespace SupermarketPricingKataTest
 
             // Adding 5 Apples to the checkout list with rule "Buy two, get one free"
             _productsRepoMock.Setup(r => r.GetProduct(apples.Sku)).Returns(apples);
-            service.AddItemToCheckout(apples.Sku, 5, new DiscountRule
-            {
-                Description = "Buy two, get one free",
-                Quantity = 3,
-                Price = apples.UnitPrice * 2
-            });
+
+            var rule1 = discountRules[1];
+            rule1.Price *= apples.UnitPrice; // set rule discount price depending on the product's unit price
+            service.AddItemToCheckout(apples.Sku, 5, rule1);
 
             var milk = new Product
             {
@@ -291,12 +298,10 @@ namespace SupermarketPricingKataTest
 
             // Adding 2L of Milk to the checkout list with rule "80% Off"
             _productsRepoMock.Setup(r => r.GetProduct(milk.Sku)).Returns(milk);
-            service.AddItemToCheckout(milk.Sku, 2, new DiscountRule
-            {
-                Description = "80% OFF",
-                Quantity = 1,
-                Price = milk.UnitPrice / 5
-            });
+
+            var rule2 = discountRules[2];
+            rule2.Price = milk.UnitPrice / 5;
+            service.AddItemToCheckout(milk.Sku, 2, rule2);
 
             // Expect the discount to be applied on each product 
             // and total price to be calculated properly
@@ -311,15 +316,11 @@ namespace SupermarketPricingKataTest
         public void Test_ExpetionWhenDiscountQuantityIsNegativeOrZero()
         {
             var service = Subject();
+            
+            var rule = discountRules[0]; // Get the rule "Three for a dollar" object 
+            rule.Quantity = 0; // The discount quantity is set to zero
+            service.AddItemToCheckout(1, 8, rule); // Adding 8 Bread items to the checkout with rule "Three for a dollar"
 
-            // Adding 8 Bread items to the checkout with rule "Three for a dollar"
-            // The discount quantity is set to zero
-            service.AddItemToCheckout(1, 8, new DiscountRule
-            {
-                Description = "Buy Three for a Dollar",
-                Quantity = 0,
-                Price = 1
-            });
             Assert.Throws<ArgumentOutOfRangeException>(() => service.CalculateTotal());
         }
     }
