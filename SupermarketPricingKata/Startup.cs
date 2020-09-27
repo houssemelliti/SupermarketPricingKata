@@ -31,6 +31,8 @@ namespace SupermarketPricingKata
 
             services.AddTransient<ICheckoutService, CheckoutService>();
             services.AddTransient<ICheckoutRepository, CheckoutRepository>();
+
+            services.AddTransient<IProductsService, ProductsService>();
             services.AddTransient<IProductsRepository, ProductsRepository>();
         }
 
