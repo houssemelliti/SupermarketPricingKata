@@ -36,13 +36,26 @@ namespace SupermarketPricingKataTest
                     _checkoutItems.Add(checkoutItem);
                 });
 
-            // Setting-up the ProductsRepository mock object to imitate getting an exapmle product
+            // Setting-upp the CheckoutRepository mock for Remove operation
+            _checkoutRepoMock.Setup(r => r.DeleteItem(It.IsAny<CheckoutItem>()))
+                .Callback<CheckoutItem>((element) => _checkoutItems.Remove(element));
+
+            // Setting-up the ProductsRepository mock object to imitate getting an exapmle product with SKU = 1
             _productsRepoMock.Setup(r => r.GetProduct(1)).Returns(new Product
             {
                 Sku = 1,
                 Name = "Bread",
                 UnitPrice = 0.4m,
                 MeasurmentUnit = MeasurmentUnits.UNIT
+            });
+
+            // Setting-up the ProductsRepository mock object to imitate getting an exapmle product with SKU = 3
+            _productsRepoMock.Setup(r => r.GetProduct(3)).Returns(new Product
+            {
+                Sku = 3,
+                Name = "Apples",
+                UnitPrice = 1.99m,
+                MeasurmentUnit = MeasurmentUnits.POUND
             });
         }
 
@@ -136,25 +149,23 @@ namespace SupermarketPricingKataTest
         {
             var service = Subject();
 
-            // Test item to add then to remove from checkout
-            var item = new CheckoutItem
+            // First add the item to the checkout
+            service.AddItemToCheckout(3, 4, null);
+
+            // Setting-up the CheckoutRepository mock object to imitate getting an exapmle checkoutItem
+            var testItem = new CheckoutItem
             {
-                Product = new Product { Sku = 1 },
+                Product = new Product { Sku = 3 },
                 Quantity = 4
             };
+            _checkoutRepoMock.Setup(r => r.GetCheckoutItem(3)).Returns(testItem);
 
-            // First setup mock object and add the item to the checkout
-            _checkoutRepoMock.Setup(r => r.GetCheckoutItem(1)).Returns(item);
-            service.AddItemToCheckout(1, 4, null);
+            // Perform delete through the service
+            service.DeleteItemFromCheckout(3);
 
-            // Then setup the mock for Remove operation and perform delete through the service
-            _checkoutRepoMock.Setup(r => r.DeleteItem(It.IsAny<CheckoutItem>()))
-                .Callback<CheckoutItem>((element) => _checkoutItems.Remove(element));
-
-            service.DeleteItemFromCheckout(1);
-
-            // Verify that the service called the repository mock object
-            _checkoutRepoMock.Verify(r => r.DeleteItem(item)); 
+            // Verify that the service called the repository mock object; otherwise MockException is thrown.
+            // this is to verify that the service will call the real repository for removing the item.
+            _checkoutRepoMock.Verify(r => r.DeleteItem(testItem)); 
         }
     }
 }
