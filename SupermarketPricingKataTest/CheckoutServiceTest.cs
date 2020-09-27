@@ -167,5 +167,17 @@ namespace SupermarketPricingKataTest
             // this is to verify that the service will call the real repository for removing the item.
             _checkoutRepoMock.Verify(r => r.DeleteItem(testItem)); 
         }
+
+        /// <summary>
+        /// Verify that the total is calculated properly 
+        /// for a single item in checkout
+        /// </summary>
+        [Fact]
+        public void Test_CanCalculateTotalSingleItemPerNumber()
+        {
+            var service = Subject();
+            service.AddItemToCheckout(1, 10, null); // adding 10 items with product SKU = 1 and unit price = $0.4
+            Assert.Equal(4, service.CalculateTotal()); // verify that total checkout price is $4
+        }
     }
 }
