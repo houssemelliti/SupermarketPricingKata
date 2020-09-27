@@ -179,5 +179,22 @@ namespace SupermarketPricingKataTest
             service.AddItemToCheckout(1, 10, null); // adding 10 items with product SKU = 1 and unit price = $0.4
             Assert.Equal(4, service.CalculateTotal()); // verify that total checkout price is $4
         }
+
+        /// <summary>
+        /// Verify that total price is calculated properly
+        /// for items sold per weight
+        /// </summary>
+        [Fact]
+        public void Test_CanCalculateTotalSingleItemPerWeight()
+        {
+            var service = Subject();
+
+            // $1.99/pound (so what does 4 ounces cost?)
+            // 4 oz is equal to 0.25 lb
+            service.AddItemToCheckout(3, 0.25m, null);
+
+            // We expect 4 oz price to be equal to $0.5
+            Assert.Equal(0.5m, service.CalculateTotal());
+        }
     }
 }
