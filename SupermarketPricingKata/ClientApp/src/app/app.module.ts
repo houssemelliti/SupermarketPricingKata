@@ -5,8 +5,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { ShopComponent } from './components/shop/shop.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
+import { ShopComponent } from './components/shop/shop.component';
+import { CheckoutService } from './services/checkout.service';
+import { FormControlService } from './services/form-control.service';
 
 @NgModule({
   declarations: [
@@ -17,11 +19,13 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
   imports: [
     BrowserModule,
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: ShopComponent, pathMatch: 'full' }
     ])
   ],
-  providers: [],
+  providers: [CheckoutService, FormControlService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

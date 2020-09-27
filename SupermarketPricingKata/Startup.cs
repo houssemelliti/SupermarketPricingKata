@@ -22,10 +22,22 @@ namespace SupermarketPricingKata
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+           
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
+            });
+
+            // Configure CORS to accept origins with default SSL port 44362 configured in launchSettings.json
+            // and from port 5001 which is the default port if you run the application from command line
+            services.AddCors(Options => {
+                Options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://localhost:44362", "https://localhost:5001")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             });
 
             services.AddTransient<ICheckoutService, CheckoutService>();
@@ -68,7 +80,7 @@ namespace SupermarketPricingKata
             }
 
             app.UseRouting();
-
+            app.UseCors();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

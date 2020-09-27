@@ -1,1 +1,71 @@
-<p>shop works!</p>
+<h1>Shop</h1>
+  <table class="table table-striped" *ngIf="products">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Unit Price</th>
+        <th>Quantity</th>
+        <th>Special Offer</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products; index as i">
+        <td>{{product.name}}</td>
+        <td>{{product.unitPrice | currency}} / {{units[product.measurmentUnit].toLowerCase()}}</td>
+        <td>
+          <form [formGroup]="productForms[i]">
+            <input type="number" size="10" formControlName="quantity" #quantity/>
+          </form>
+        </td>
+        <td>
+          <form [formGroup]="productForms[i]">
+            <select formControlName="discount">
+              <option *ngFor="let rule of discountRules; index as i" [selected]="rule.description === 'None'">
+                {{rule.description}}
+              </option>
+            </select>
+          </form>
+        </td>
+        <td>
+          <button type="button" class="btn btn-success btn-sm" (click)="addItemToCheckout(product, productForms[i])"
+                  [disabled]="quantity.value == ''">
+            Add to Cart
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<br />
+<br />
+<div class="shop" *ngIf="checkout.checkoutItems.length > 0">
+  <h1>Checkout</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Count</th>
+        <th>Product</th>
+        <th>Unit Price</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ci of checkout.checkoutItems">
+        <td>{{ci.quantity}}</td>
+        <td>{{ci.product.name}}</td>
+        <td>{{ci.product.unitPrice | currency}}</td>
+        <td>
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteFromCheckout(ci.product.sku)">
+            Remove from Cart
+          </button>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td><strong>Total Price</strong></td>
+        <td><strong>{{checkout.totalPrice | currency}}</strong></td>
+    </tr>
+    </tfoot>
+  </table>
+</div>
