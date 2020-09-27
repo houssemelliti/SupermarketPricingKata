@@ -309,7 +309,7 @@ namespace SupermarketPricingKataTest
         }
 
         /// <summary>
-        /// Verify that ArgumentOutOfRangeException is thrown when attepting  
+        /// Verify that ArgumentOutOfRangeException is thrown when attempting  
         /// to add an item to the checkout with negative or zero discounted quantity.
         /// </summary>
         [Fact]
@@ -321,6 +321,27 @@ namespace SupermarketPricingKataTest
             rule.Quantity = 0; // The discount quantity is set to zero
             service.AddItemToCheckout(1, 8, rule); // Adding 8 Bread items to the checkout with rule "Three for a dollar"
 
+            // Expect an exception to be thrown
+            Assert.Throws<ArgumentOutOfRangeException>(() => service.CalculateTotal());
+        }
+
+        /// <summary>
+        /// Verify that ArgumentOutOfRangeException is thrown when attempting
+        /// to add a checkout item with negative discount price
+        /// </summary>
+        [Fact]
+        public void Test_ExpetionWhenDiscountPriceIsNegative()
+        {
+            var service = Subject();
+
+            var rule = discountRules[0]; // Get the rule "Three for a dollar" object 
+            rule.Price = -1; // The discount price is set to a negative value
+
+            // Adding 8 Bread items to the checkout with rule "Three for a dollar"
+            // The discount rule price is negative
+            service.AddItemToCheckout(1, 8, rule);
+
+            // Expect an exception to be thrown
             Assert.Throws<ArgumentOutOfRangeException>(() => service.CalculateTotal());
         }
     }
