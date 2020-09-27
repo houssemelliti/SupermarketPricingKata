@@ -80,6 +80,11 @@ namespace SupermarketPricingKata.Services
 
         private decimal CalculateTotalForItemWithDiscount(CheckoutItem item)
         {
+            if (item.Product.DiscountRule.Quantity <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Cannot add a discount with negative or zero quantity");
+            }
+
             var totalPrice = 0m;
             
             // calculate the number of items subject to discount based on the discount rule's number of discounts
