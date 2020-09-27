@@ -224,5 +224,25 @@ namespace SupermarketPricingKataTest
 
             Assert.Equal(5.54m, service.CalculateTotal());
         }
+
+        /// <summary>
+        /// Verify that a discount rule is applied properly on a checkout item.
+        /// </summary>
+        [Fact]
+        public void Test_CanApplyDiscountRuleSingleItemPerNumber()
+        {
+            var service = Subject();
+
+            // Adding 8 Bread items with unit price $0.4 to the checkout with rule "Three for a dollar"
+            service.AddItemToCheckout(1, 8, new DiscountRule
+            {
+                Description = "Buy Three for a Dollar",
+                Quantity = 3,
+                Price = 1
+            });
+            // Verify that 6 bread items are subject to discount with rule "Three for a dollar"
+            // and 2 items are excluded from discount
+            Assert.Equal(2.8m, service.CalculateTotal());
+        }
     }
 }
