@@ -62,10 +62,7 @@ namespace SupermarketPricingKata.Services
             {
                 if (item.Product.DiscountRule != null)
                 {
-                    var nbrOfDiscounts = Math.Floor(item.Quantity / item.Product.DiscountRule.Quantity);
-                    totalPrice += nbrOfDiscounts * item.Product.DiscountRule.Price;
-                    var remaining = item.Quantity - nbrOfDiscounts * item.Product.DiscountRule.Quantity;
-                    totalPrice += remaining * item.Product.UnitPrice;
+                    totalPrice += CalculateTotalForItemWithDiscount(item);
                 }
                 else
                 {
@@ -79,6 +76,20 @@ namespace SupermarketPricingKata.Services
         public IList<CheckoutItem> GetCheckoutItems()
         {
             throw new NotImplementedException();
+        }
+
+        private decimal CalculateTotalForItemWithDiscount(CheckoutItem item)
+        {
+            var totalPrice = 0m;
+            
+            // calculate the number of items subject to discount based on the discount rule's number of discounts
+            var nbrOfDiscounts = Math.Floor(item.Quantity / item.Product.DiscountRule.Quantity);
+            totalPrice += nbrOfDiscounts * item.Product.DiscountRule.Price;
+            
+            // calculate the number of elements excluded from discount
+            var remaining = item.Quantity - nbrOfDiscounts * item.Product.DiscountRule.Quantity;
+            totalPrice += remaining * item.Product.UnitPrice;
+            return totalPrice;
         }
     }
 }
