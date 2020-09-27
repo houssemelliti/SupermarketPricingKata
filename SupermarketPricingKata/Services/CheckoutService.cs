@@ -60,7 +60,17 @@ namespace SupermarketPricingKata.Services
             var totalPrice = 0m;
             foreach (var item in checkoutItems)
             {
-                totalPrice += item.Price;
+                if (item.Product.DiscountRule != null)
+                {
+                    var nbrOfDiscounts = Math.Floor(item.Quantity / item.Product.DiscountRule.Quantity);
+                    totalPrice += nbrOfDiscounts * item.Product.DiscountRule.Price;
+                    var remaining = item.Quantity - nbrOfDiscounts * item.Product.DiscountRule.Quantity;
+                    totalPrice += remaining * item.Product.UnitPrice;
+                }
+                else
+                {
+                    totalPrice += item.Price;
+                }
             }
             // Prices are rounded to 2 decimals
             return Math.Round(totalPrice, 2);

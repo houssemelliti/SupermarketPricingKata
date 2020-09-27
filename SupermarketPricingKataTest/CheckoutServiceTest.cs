@@ -32,6 +32,7 @@ namespace SupermarketPricingKataTest
                 .Callback<Product, decimal, DiscountRule>((product, quantity, rule) =>
                 {
                     // using the provided parameters to the mock to create a CheckoutItem and add it to the list
+                    product.DiscountRule = rule;
                     var checkoutItem = new CheckoutItem { Product = product, Quantity = quantity, Price = product.UnitPrice * quantity };
                     _checkoutItems.Add(checkoutItem);
                 });

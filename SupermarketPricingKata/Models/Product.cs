@@ -30,5 +30,9 @@
         /// </summary>
         public MeasurmentUnits MeasurmentUnit { get; set; }
 
+        /// <summary>
+        /// Discount rule to be applied on the product.
+        /// </summary>
+        public DiscountRule DiscountRule { get; set; }
     }
 }

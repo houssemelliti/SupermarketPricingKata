@@ -13,6 +13,8 @@ namespace SupermarketPricingKata.Repositories
         
         public void AddItem(Product product, decimal quantity, DiscountRule discountRule)
         {
+            product.DiscountRule = discountRule;
+
             // create a CheckoutItem object from the provided parameters
             var checkoutItem = new CheckoutItem { Product = product, Quantity = quantity, Price = product.UnitPrice * quantity };
 
