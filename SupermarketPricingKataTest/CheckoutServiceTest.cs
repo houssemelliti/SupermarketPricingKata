@@ -245,5 +245,62 @@ namespace SupermarketPricingKataTest
             // and 2 items are excluded from discount
             Assert.Equal(2.8m, service.CalculateTotal());
         }
+
+        /// <summary>
+        /// Verify that different discount rules can be applied on multiple items
+        /// regardless of the unit of measurment. Verify also that correct total
+        /// price is calculated after applying discounts.
+        /// </summary>
+        [Fact]
+        public void Test_CanApplyDiscountRulesMultipleItems()
+        {
+            var service = Subject();
+
+            // Adding 4 Bread items to the checkout list with rule "Three for a dollar"
+            service.AddItemToCheckout(1, 4, new DiscountRule
+            {
+                Description = "Buy Three for a Dollar",
+                Quantity = 3,
+                Price = 1
+            });
+
+            var apples = new Product
+            {
+                Sku = 3,
+                Name = "Apples",
+                MeasurmentUnit = MeasurmentUnits.POUND,
+                UnitPrice = 1.99m
+            };
+
+            // Adding 5 Apples to the checkout list with rule "Buy two, get one free"
+            _productsRepoMock.Setup(r => r.GetProduct(apples.Sku)).Returns(apples);
+            service.AddItemToCheckout(apples.Sku, 5, new DiscountRule
+            {
+                Description = "Buy two, get one free",
+                Quantity = 3,
+                Price = apples.UnitPrice * 2
+            });
+
+            var milk = new Product
+            {
+                Sku = 4,
+                Name = "Milk",
+                MeasurmentUnit = MeasurmentUnits.LITRE,
+                UnitPrice = 1.25m
+            };
+
+            // Adding 2L of Milk to the checkout list with rule "80% Off"
+            _productsRepoMock.Setup(r => r.GetProduct(milk.Sku)).Returns(milk);
+            service.AddItemToCheckout(milk.Sku, 2, new DiscountRule
+            {
+                Description = "80% OFF",
+                Quantity = 1,
+                Price = milk.UnitPrice / 5
+            });
+
+            // Expect the discount to be applied on each product 
+            // and total price to be calculated properly
+            Assert.Equal(9.86m, service.CalculateTotal());
+        }
     }
 }
