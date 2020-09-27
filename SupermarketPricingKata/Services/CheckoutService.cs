@@ -58,13 +58,15 @@ namespace SupermarketPricingKata.Services
             IList<CheckoutItem> checkoutItems = _checkoutRepo.GetCheckoutItems();
 
             var totalPrice = 0m;
+
+            // Apply price calculation for every item in the checkout
             foreach (var item in checkoutItems)
             {
                 if (item.Product.DiscountRule != null)
                 {
                     totalPrice += CalculateTotalForItemWithDiscount(item);
                 }
-                else
+                else // the item has no discounts to be applied
                 {
                     totalPrice += item.Price;
                 }
@@ -85,6 +87,11 @@ namespace SupermarketPricingKata.Services
                 throw new ArgumentOutOfRangeException("Cannot add a discount with negative or zero quantity");
             }
 
+            if (item.Product.DiscountRule.Price < 0)
+            {
+                throw new ArgumentOutOfRangeException("Cannot add a discount with negative price");
+            }
+
             var totalPrice = 0m;
             
             // calculate the number of items subject to discount based on the discount rule's number of discounts
@@ -94,6 +101,7 @@ namespace SupermarketPricingKata.Services
             // calculate the number of elements excluded from discount
             var remaining = item.Quantity - nbrOfDiscounts * item.Product.DiscountRule.Quantity;
             totalPrice += remaining * item.Product.UnitPrice;
+            
             return totalPrice;
         }
     }
