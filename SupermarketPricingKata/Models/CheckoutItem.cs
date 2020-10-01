@@ -6,6 +6,11 @@
     public class CheckoutItem
     {
         /// <summary>
+        /// The item identifier in the checkout list.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
         /// Models the <see cref="Models.Product"/> object in the checkout item.
         /// </summary>
         public Product Product { get; set; }

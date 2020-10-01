@@ -19,9 +19,9 @@ namespace SupermarketPricingKata.Services
         /// <summary>
         /// Deletes an item from the checkout.
         /// </summary>
-        /// <param name="sku">Item identifier.</param>
+        /// <param name="id">Item identifier in the checkout list.</param>
         /// <returns>True if the item was removed successfully; otherwise returns False.</returns>
-        bool DeleteItemFromCheckout(int sku);
+        bool DeleteItemFromCheckout(int id);
 
         /// <summary>
         /// Calculates the total price value of the checkout.

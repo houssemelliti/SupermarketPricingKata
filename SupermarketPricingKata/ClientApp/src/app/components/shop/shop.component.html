@@ -43,7 +43,7 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Count</th>
+        <th>Quantity</th>
         <th>Product</th>
         <th>Unit Price</th>
         <th></th>
@@ -55,7 +55,7 @@
         <td>{{ci.product.name}}</td>
         <td>{{ci.product.unitPrice | currency}}</td>
         <td>
-          <button type="button" class="btn btn-danger btn-sm" (click)="deleteFromCheckout(ci.product.sku)">
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteFromCheckout(ci.id)">
             Remove from Cart
           </button>
         </td>

@@ -139,16 +139,16 @@ import { Checkout, Product } from '../models/models';
      /**
       * Performs a HTTP DELETE request to remove an item from the checkout.
       *
-      * @param sku
+      * @param id checkout item identifier in the checkout list
       * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
       * @param reportProgress flag to report request and response progress.
       */
-     public deleteItemFromCheckout(sku: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
-     public deleteItemFromCheckout(sku: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-     public deleteItemFromCheckout(sku: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-     public deleteItemFromCheckout(sku: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+     public deleteItemFromCheckout(id: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
+     public deleteItemFromCheckout(id: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+     public deleteItemFromCheckout(id: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+     public deleteItemFromCheckout(id: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-         if (sku === null || sku === undefined) {
+         if (id === null || id === undefined) {
              throw new Error('Required parameter sku was null or undefined when calling deleteItemFromCheckout.');
          }
 
@@ -166,7 +166,7 @@ import { Checkout, Product } from '../models/models';
          const consumes: string[] = [
          ];
 
-         return this.httpClient.request<any>('delete',`${this.basePath}/deleteItem/${encodeURIComponent(String(sku))}`,
+         return this.httpClient.request<any>('delete',`${this.basePath}/deleteItem/${encodeURIComponent(String(id))}`,
              {
                  withCredentials: this.configuration.withCredentials,
                  headers: headers,

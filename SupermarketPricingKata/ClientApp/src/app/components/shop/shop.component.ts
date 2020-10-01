@@ -92,8 +92,8 @@ export class ShopComponent implements OnInit {
     this.discountRules.push(rule3);
   }
 
-  deleteFromCheckout(sku: number) {
-    this.chechkoutService.deleteItemFromCheckout(sku).subscribe(() => this.update.next(true));
+  deleteFromCheckout(id: number) {
+    this.chechkoutService.deleteItemFromCheckout(id).subscribe(() => this.update.next(true));
   }
 
 }

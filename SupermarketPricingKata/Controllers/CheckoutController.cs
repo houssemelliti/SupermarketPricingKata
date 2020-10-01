@@ -88,14 +88,14 @@ namespace SupermarketPricingKata.Controllers
 
         /// <summary>
         /// Performs a HTTP DELETE request to remove an item from the checkout
-        /// based on its <paramref name="sku"/>.
+        /// based on its <paramref name="id"/>.
         /// </summary>
-        /// <param name="sku">Route parameter representing the checkout item's product identifier</param>
+        /// <param name="id">Route parameter representing the checkout item's identifier</param>
         /// <returns>A HTTP status code 200 OK</returns>
-        [HttpDelete("deleteItem/{sku}")]
-        public IActionResult DeleteItemFromCheckout(int sku)
+        [HttpDelete("deleteItem/{id}")]
+        public IActionResult DeleteItemFromCheckout(int id)
         {
-            _checkoutService.DeleteItemFromCheckout(sku);
+            _checkoutService.DeleteItemFromCheckout(id);
             return Ok();
         }
     }

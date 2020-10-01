@@ -13,6 +13,7 @@ import { DiscountRule } from './discountRule';
 import { Product } from './product';
 
 export interface CheckoutItem {
+    id?: number;
     product?: Product;
     quantity?: number;
     discountRule?: DiscountRule;

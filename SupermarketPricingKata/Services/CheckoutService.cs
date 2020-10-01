@@ -52,9 +52,9 @@ namespace SupermarketPricingKata.Services
             _checkoutRepo.AddItem(product, quantity, discountRule);
         }
 
-        public bool DeleteItemFromCheckout(int sku)
+        public bool DeleteItemFromCheckout(int id)
         {
-            var item = _checkoutRepo.GetCheckoutItem(sku); // Get the item by SKU from repository
+            var item = _checkoutRepo.GetCheckoutItem(id); // Get the item by Id from repository
             return _checkoutRepo.DeleteItem(item);
         }
 

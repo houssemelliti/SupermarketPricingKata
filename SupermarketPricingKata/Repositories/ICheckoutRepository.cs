@@ -14,11 +14,11 @@ namespace SupermarketPricingKata.Repositories
         IList<CheckoutItem> GetCheckoutItems();
 
         /// <summary>
-        /// Gets a checkout item based on the product SKU.
+        /// Gets a checkout item based on its identifier.
         /// </summary>
-        /// <param name="sku">Product identifier or stock keeping unit.</param>
+        /// <param name="id">Checkout item identifier in the chekout list.</param>
         /// <returns><see cref="CheckoutItem"/> Object.</returns>
-        CheckoutItem GetCheckoutItem(int sku);
+        CheckoutItem GetCheckoutItem(int id);
 
         /// <summary>
         /// Adds an item to the checkout list.

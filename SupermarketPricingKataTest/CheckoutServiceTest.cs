@@ -187,13 +187,14 @@ namespace SupermarketPricingKataTest
             // Setting-up the CheckoutRepository mock object to imitate getting an exapmle checkoutItem
             var testItem = new CheckoutItem
             {
+                Id = 1,
                 Product = new Product { Sku = 3 },
                 Quantity = 4
             };
-            _checkoutRepoMock.Setup(r => r.GetCheckoutItem(3)).Returns(testItem);
+            _checkoutRepoMock.Setup(r => r.GetCheckoutItem(1)).Returns(testItem);
 
             // Perform delete through the service
-            service.DeleteItemFromCheckout(3);
+            service.DeleteItemFromCheckout(1);
 
             // Verify that the service called the repository mock object; otherwise MockException is thrown.
             // this is to verify that the service will call the real repository for removing the item.
