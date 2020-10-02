@@ -24,6 +24,19 @@ namespace SupermarketPricingKata.Services
         bool DeleteItemFromCheckout(int id);
 
         /// <summary>
+        /// Gets the list of available discount rules from repository.
+        /// </summary>
+        /// <returns>The list of dicount rules.</returns>
+        IList<DiscountRule> GetDiscountRules();
+
+        /// <summary>
+        /// Gets a discount rule from repository based on its identifier.
+        /// </summary>
+        /// <param name="id">The discount rule identifier.</param>
+        /// <returns>A <see cref="DiscountRule"/> object.</returns>
+        DiscountRule GetDiscountRule(int id);
+
+        /// <summary>
         /// Calculates the total price value of the checkout.
         /// </summary>
         /// <returns>A decimal value representing the total price rounded to 2 decimals.</returns>

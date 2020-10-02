@@ -46,6 +46,8 @@ namespace SupermarketPricingKata
             services.AddTransient<IProductsService, ProductsService>();
             services.AddTransient<IProductsRepository, ProductsRepository>();
 
+            services.AddTransient<IDiscountsRepository, DiscountsRepository>();
+
             // Configure API documentation with Swagger
             services.AddSwaggerGen(options =>
             {

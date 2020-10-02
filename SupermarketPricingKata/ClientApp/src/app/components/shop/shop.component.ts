@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from "rxjs";
 import { CheckoutService } from "../../services/checkout.service";
-import { FormGroup } from '@angular/forms';
 import { FormControlService } from '../../services/form-control.service';
 import { Product, DiscountRule, Checkout, CheckoutItem } from 'src/app/models/models';
 enum MeasurmentUnits { "UNIT", "POUND", "LITRE", "METRE", "GRAM" }
@@ -19,20 +19,25 @@ export class ShopComponent implements OnInit {
   public discountRules: DiscountRule[];
   public update = new BehaviorSubject<boolean>(false); // Needed to auto-update the checkout object
   units = MeasurmentUnits;
+  defaultDiscount = [{ id: 0, description: 'None', price: 0, quantity: 0 }];
 
   constructor(private chechkoutService: CheckoutService, private formService: FormControlService) {
     // Initialize lists
     this.checkout = { checkoutItems: [], totalPrice: 0 } as Checkout;
-    this.discountRules = [{ id: 0, description: 'None', price: 0, quantity: 0 }];
   }
 
   ngOnInit() {
+    // Get the list of available products in the strore
     this.chechkoutService.getProducts().subscribe(result => {
       this.products = result;
       this.initializeForms();
     });
 
-    this.setDiscountRules();
+    // Get the list of available discount rules for products
+    this.chechkoutService.getDiscountRules().subscribe(result => {
+      this.discountRules = result;
+    });
+
     this.getCheckout();
     if (this.update) {
       // Reload getCheckout() request each time an item is added or removed from the checkout
@@ -56,40 +61,16 @@ export class ShopComponent implements OnInit {
     checkoutItem.product = product;
     checkoutItem.quantity = form.get('quantity').value;
 
-    this.discountRules.forEach(rule => {
-      if (rule.description === form.get('discount').value) {
-        checkoutItem.discountRule = rule;
-        // Set the discount price based on the product's unit price for each type of rule
-        switch (rule.id) {
-          case 2:
-            checkoutItem.discountRule.price = checkoutItem.product.unitPrice * 2;
-            break;
-          case 3:
-            checkoutItem.discountRule.price = checkoutItem.product.unitPrice / 5;
-            break;
-          default:
-            break;
-        }
-      }
-    });
+    if (form.get('discount').value !== "default") {
+      checkoutItem.discountRule = {} as DiscountRule;
+      checkoutItem.discountRule.id = form.get('discount').value; // set the discount rule id
+    }
     // Perform adding the created item to the checkout through HTTP
     this.chechkoutService.addItemToCheckout(checkoutItem).subscribe(() => this.update.next(true));
   }
 
   getCheckout() {
     this.chechkoutService.getCheckout().subscribe(result => this.checkout = result);
-  }
-
-  setDiscountRules() {
-    // Create example discount rules to be applied on any product
-    let rule1 = { id: 1, description: "Three for a dollar", quantity: 3, price: 1 } as DiscountRule;
-    this.discountRules.push(rule1);
-
-    let rule2 = { id: 2, description: "Buy two, get one free!", quantity: 3 } as DiscountRule;
-    this.discountRules.push(rule2);
-
-    let rule3 = { id: 3, description: "80% Off !", quantity: 1 } as DiscountRule;
-    this.discountRules.push(rule3);
   }
 
   deleteFromCheckout(id: number) {

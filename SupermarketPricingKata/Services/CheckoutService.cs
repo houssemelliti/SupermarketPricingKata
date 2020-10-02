@@ -9,12 +9,14 @@ namespace SupermarketPricingKata.Services
     {
         private readonly ICheckoutRepository _checkoutRepo;
         private readonly IProductsRepository _productsRepo;
+        private readonly IDiscountsRepository _discountsRepo;
 
         // Using dependency injection to inject the repositories to the service.
-        public CheckoutService(ICheckoutRepository checkoutRepo, IProductsRepository productsRepo)
+        public CheckoutService(ICheckoutRepository checkoutRepo, IProductsRepository productsRepo, IDiscountsRepository discountsRepo)
         {
             _checkoutRepo = checkoutRepo;
             _productsRepo = productsRepo;
+            _discountsRepo = discountsRepo;
         }
 
         public IList<CheckoutItem> GetCheckoutItems()
@@ -47,9 +49,25 @@ namespace SupermarketPricingKata.Services
                 throw new ArgumentException("Cannot add product sold by number with a floating decimal quantity");
             }
 
+            if(discountRule != null)
+            {
+                discountRule = ConfigureDiscountRuleParams(discountRule.Id, product.UnitPrice);
+                
+            }
+
             // Finally add a "quantity" of this product to the list of 
             // checkout items if all the checking conditions are met
             _checkoutRepo.AddItem(product, quantity, discountRule);
+        }
+
+        public DiscountRule GetDiscountRule(int id)
+        {
+            return _discountsRepo.GetDiscountRule(id);
+        }
+
+        public IList<DiscountRule> GetDiscountRules()
+        {
+            return _discountsRepo.GetDiscountRules();
         }
 
         public bool DeleteItemFromCheckout(int id)
@@ -93,16 +111,50 @@ namespace SupermarketPricingKata.Services
             }
 
             var totalPrice = 0m;
-            
-            // calculate the number of items subject to discount based on the discount rule's number of discounts
-            var nbrOfDiscounts = Math.Floor(item.Quantity / item.Product.DiscountRule.Quantity);
-            totalPrice += nbrOfDiscounts * item.Product.DiscountRule.Price;
-            
-            // calculate the number of elements excluded from discount
-            var remaining = item.Quantity - nbrOfDiscounts * item.Product.DiscountRule.Quantity;
-            totalPrice += remaining * item.Product.UnitPrice;
+
+            if (item.Product.DiscountRule.Quantity == 1)
+            {
+                // In this case, the discount is applied on the total number or quantity of products
+                totalPrice += item.Quantity * item.Product.DiscountRule.Price;
+            }
+            else
+            {
+                // calculate the number of items subject to discount based on the discount rule's number of discounts
+                var nbrOfDiscounts = Math.Floor(item.Quantity / item.Product.DiscountRule.Quantity);
+                totalPrice += nbrOfDiscounts * item.Product.DiscountRule.Price;
+
+                // calculate the number of elements excluded from discount
+                var remaining = item.Quantity - nbrOfDiscounts * item.Product.DiscountRule.Quantity;
+                totalPrice += remaining * item.Product.UnitPrice;
+            }
             
             return totalPrice;
+        }
+
+        private DiscountRule ConfigureDiscountRuleParams(int id, decimal unitPrice)
+        {
+            var discountRule = GetDiscountRule(id);
+            switch(id)
+            {
+                case 1: // Rule "Buy Three for a Dollar"
+                    discountRule.Price = 1;
+                    break;
+                case 2: // Rule "Buy two, get one free"
+                    discountRule.Price = unitPrice * 2;
+                    break;
+                case 3: // Rule "80% Off"
+                    discountRule.Price = unitPrice / 5;
+                    break;
+                case 4: // Rule "50% Off"
+                    discountRule.Price = unitPrice / 2;
+                    break;
+
+                /* You can add as many cases as you want following this pattern */
+
+                default:
+                    break;
+            }
+            return discountRule;
         }
     }
 }

@@ -21,7 +21,8 @@
         <td>
           <form [formGroup]="productForms[i]">
             <select formControlName="discount">
-              <option *ngFor="let rule of discountRules; index as i" [selected]="rule.description === 'None'">
+              <option value="default">No discount</option>
+              <option *ngFor="let rule of discountRules" [ngValue]="rule.id">
                 {{rule.description}}
               </option>
             </select>
@@ -38,7 +39,7 @@
   </table>
 <br />
 <br />
-<div class="shop" *ngIf="checkout.checkoutItems.length > 0">
+<div class="checkout" *ngIf="checkout.checkoutItems.length > 0">
   <h1>Checkout</h1>
   <table class="table table-striped">
     <thead>
@@ -46,6 +47,7 @@
         <th>Quantity</th>
         <th>Product</th>
         <th>Unit Price</th>
+        <th>Offer</th>
         <th></th>
       </tr>
     </thead>
@@ -54,6 +56,8 @@
         <td>{{ci.quantity}}</td>
         <td>{{ci.product.name}}</td>
         <td>{{ci.product.unitPrice | currency}}</td>
+        <td *ngIf="ci.product.discountRule != null">{{ci.product.discountRule.description}}</td>
+        <td *ngIf="ci.product.discountRule == null"></td>
         <td>
           <button type="button" class="btn btn-danger btn-sm" (click)="deleteFromCheckout(ci.id)">
             Remove from Cart

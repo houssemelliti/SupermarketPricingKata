@@ -71,6 +71,20 @@ namespace SupermarketPricingKata.Controllers
         }
 
         /// <summary>
+        /// Performs a HTTP GET request to get the list of available discount rules.
+        /// </summary>
+        /// <returns>
+        /// A HTTP status code 200 OK and the discount rules list
+        /// if the operation is successful; otherwise 404 NOT FOUND.
+        /// </returns>
+        [HttpGet("discounts")]
+        public IActionResult GetDiscountRules()
+        {
+            var discounts = _checkoutService.GetDiscountRules();
+            return Ok(discounts);
+        }
+
+        /// <summary>
         /// Performs a HTTP POST request to add an item to the checkout list.
         /// </summary>
         /// <param name="item">HTTP POST request body containing the item to be added.</param>

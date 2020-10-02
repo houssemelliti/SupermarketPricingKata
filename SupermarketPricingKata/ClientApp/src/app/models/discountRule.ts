@@ -13,6 +13,4 @@
 export interface DiscountRule {
     id?: number;
     description?: string;
-    quantity?: number;
-    price?: number;
 }

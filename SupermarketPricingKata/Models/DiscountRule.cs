@@ -11,6 +11,10 @@ namespace SupermarketPricingKata.Models
     public class DiscountRule
     {
         /// <summary>
+        /// Discount rule identifier.
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
         /// The discout rule description.
         /// </summary>
         public string Description { get; set; }

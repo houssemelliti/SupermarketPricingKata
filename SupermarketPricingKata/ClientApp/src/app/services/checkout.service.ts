@@ -21,7 +21,7 @@
 
  import { BASE_PATH, COLLECTION_FORMATS }                     from './variables';
  import { Configuration }                                     from './configuration';
-import { Checkout, Product } from '../models/models';
+import { Checkout, Product, DiscountRule } from '../models/models';
 
 
  @Injectable()
@@ -185,7 +185,7 @@ import { Checkout, Product } from '../models/models';
      public getProducts(observe?: 'body', reportProgress?: boolean): Observable<any>;
      public getProducts(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
      public getProducts(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-   public getProducts(observe: any = 'body', reportProgress: boolean = false): Observable<any> {
+     public getProducts(observe: any = 'body', reportProgress: boolean = false): Observable<any> {
 
      let headers = this.defaultHeaders;
 
@@ -250,5 +250,40 @@ import { Checkout, Product } from '../models/models';
              }
          );
      }
+
+   /**
+     * Gets the list of discount rules through HTTP
+     * 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+   public getDiscountRules(observe?: 'body', reportProgress?: boolean): Observable<any>;
+   public getDiscountRules(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+   public getDiscountRules(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+   public getDiscountRules(observe: any = 'body', reportProgress: boolean = false): Observable<any> {
+
+     let headers = this.defaultHeaders;
+
+     // to determine the Accept header
+     let httpHeaderAccepts: string[] = [
+     ];
+     const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+     if (httpHeaderAcceptSelected != undefined) {
+       headers = headers.set('Accept', httpHeaderAcceptSelected);
+     }
+
+     // to determine the Content-Type header
+     const consumes: string[] = [
+     ];
+
+     return this.httpClient.request<DiscountRule[]>('get', `${this.basePath}/discounts`,
+       {
+         withCredentials: this.configuration.withCredentials,
+         headers: headers,
+         observe: observe,
+         reportProgress: reportProgress
+       }
+     );
+   }
 
  }
