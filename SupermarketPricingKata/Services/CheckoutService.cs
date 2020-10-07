@@ -1,4 +1,5 @@
-﻿using SupermarketPricingKata.Models;
+﻿using SupermarketPricingKata.Commons;
+using SupermarketPricingKata.Models;
 using SupermarketPricingKata.Repositories;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace SupermarketPricingKata.Services
             return _checkoutRepo.GetCheckoutItems();
         }
 
-        public void AddItemToCheckout(int sku, decimal quantity, DiscountRule discountRule)
+        public void AddItemToCheckout(int sku, decimal quantity, MeasurmentUnits buyUnit, DiscountRule discountRule)
         {
             // First get the product with the corresponding SKU from repository 
             var product = _productsRepo.GetProduct(sku);
@@ -44,9 +45,22 @@ namespace SupermarketPricingKata.Services
                 throw new ArgumentOutOfRangeException("Cannot add a product with negative or zero quantity");
             }
 
-            if (product.MeasurmentUnit == MeasurmentUnits.UNIT && quantity != Math.Round(quantity))
+            if (product.MeasurmentUnit == MeasurmentUnits.PIECE && quantity != Math.Round(quantity))
             {
                 throw new ArgumentException("Cannot add product sold by number with a floating decimal quantity");
+            }
+
+            if (product.MeasurmentUnit != buyUnit)
+            {
+                try
+                {
+                    // get the quantity corresponding to the sell unit
+                    quantity = GetQuantityFromUnit(quantity, product.MeasurmentUnit, buyUnit);
+                }
+                catch(Exception e)
+                {
+                    throw new ArgumentException(e.Message);
+                }
             }
 
             if(discountRule != null)
@@ -58,6 +72,57 @@ namespace SupermarketPricingKata.Services
             // Finally add a "quantity" of this product to the list of 
             // checkout items if all the checking conditions are met
             _checkoutRepo.AddItem(product, quantity, discountRule);
+        }
+
+        // returns the quantity equivalent to sell unit based on the buy unit
+        private decimal GetQuantityFromUnit(decimal quantity, MeasurmentUnits saleUnit, MeasurmentUnits buyUnit)
+        {
+            string message = "Not compatible mass units";
+            switch (saleUnit)
+            {
+                // Convert to pounds
+                case MeasurmentUnits.POUND:
+                    if (buyUnit == MeasurmentUnits.OUNCE)
+                        return MassConversion.OuncesToPounds(quantity);
+                    if (buyUnit == MeasurmentUnits.GRAM)
+                        return MassConversion.GramsToPounds(quantity);
+                    if (buyUnit == MeasurmentUnits.KILOGRAM)
+                        return MassConversion.KilogramsToPounds(quantity);
+                    else
+                        throw new ArgumentException(message);
+                // Convert to Kilograms
+                case MeasurmentUnits.KILOGRAM:
+                    if (buyUnit == MeasurmentUnits.GRAM)
+                        return MassConversion.GramsToKilograms(quantity);
+                    if (buyUnit == MeasurmentUnits.POUND)
+                        return MassConversion.PoundsToKilograms(quantity);
+                    if (buyUnit == MeasurmentUnits.OUNCE)
+                        return MassConversion.OuncesToKilograms(quantity);
+                    else
+                        throw new ArgumentException(message);
+                // Convert to Grams
+                case MeasurmentUnits.GRAM:
+                    if (buyUnit == MeasurmentUnits.OUNCE)
+                        return MassConversion.OuncesToGrams(quantity);
+                    if (buyUnit == MeasurmentUnits.POUND)
+                        return MassConversion.PoundsToGrams(quantity);
+                    if (buyUnit == MeasurmentUnits.KILOGRAM)
+                        return MassConversion.KilogramsToGrams(quantity);
+                    else
+                        throw new ArgumentException(message);
+                // Convert to ounces
+                case MeasurmentUnits.OUNCE:
+                    if (buyUnit == MeasurmentUnits.POUND)
+                        return MassConversion.PoundsToOunces(quantity);
+                    if (buyUnit == MeasurmentUnits.GRAM)
+                        return MassConversion.GramsToOunces(quantity);
+                    if (buyUnit == MeasurmentUnits.KILOGRAM)
+                        return MassConversion.KilogramsToOunces(quantity);
+                    else
+                        throw new ArgumentException(message);
+                default:
+                    throw new ArgumentException(message);
+            }
         }
 
         public DiscountRule GetDiscountRule(int id)

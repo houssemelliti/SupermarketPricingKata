@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the list of measurment units for products.
     /// </summary>
-    public enum MeasurmentUnits { UNIT, POUND, LITRE, METRE, GRAM }
+    public enum MeasurmentUnits { PIECE, POUND, OUNCE, LITRE, METRE, KILOGRAM, GRAM } // Further units can be added here
 
     /// <summary>
     /// Models a product object in the store.

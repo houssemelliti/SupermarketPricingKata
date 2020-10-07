@@ -14,7 +14,7 @@ namespace SupermarketPricingKata.Services
         /// <param name="sku">Item identifier.</param>
         /// <param name="quantity">Number of units to be added.</param>
         /// <param name="discountRule">Discount rule to be applied on the item.</param>
-        void AddItemToCheckout(int sku, decimal quantity, DiscountRule discountRule);
+        void AddItemToCheckout(int sku, decimal quantity, MeasurmentUnits buyUnit, DiscountRule discountRule);
 
         /// <summary>
         /// Deletes an item from the checkout.

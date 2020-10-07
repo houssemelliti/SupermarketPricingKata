@@ -227,7 +227,7 @@ namespace SupermarketPricingKataTest
             // Adding 4 Bread items to the checkout list with rule "Three for a dollar"
             checkoutService.AddItemToCheckout(1, 4, MeasurmentUnits.PIECE, checkoutService.GetDiscountRule(1));
 
-            // Adding 5 Apples to the checkout list with rule "Buy two, get one free"
+            // Adding 5 lb of Apple to the checkout list with rule "Buy two, get one free"
             checkoutService.AddItemToCheckout(3, 5, MeasurmentUnits.POUND, checkoutService.GetDiscountRule(2));
 
             // Adding 2.5L of Milk to the checkout list with rule "80% Off"

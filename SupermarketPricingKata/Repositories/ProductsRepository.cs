@@ -14,14 +14,14 @@ namespace SupermarketPricingKata.Repositories
             {
                 Sku = 1,
                 Name = "Bread",
-                MeasurmentUnit = MeasurmentUnits.UNIT,
+                MeasurmentUnit = MeasurmentUnits.PIECE,
                 UnitPrice = 0.4m
             },
             new Product
             {
                 Sku = 2,
                 Name = "Eggs",
-                MeasurmentUnit = MeasurmentUnits.UNIT,
+                MeasurmentUnit = MeasurmentUnits.PIECE,
                 UnitPrice = 1
             },
             new Product
