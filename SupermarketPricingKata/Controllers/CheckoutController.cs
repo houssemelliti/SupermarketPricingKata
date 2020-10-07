@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SupermarketPricingKata.Models;
 using SupermarketPricingKata.Services;
 using SupermarketPricingKata.ViewModels;
 
@@ -83,6 +82,20 @@ namespace SupermarketPricingKata.Controllers
         {
             var discounts = _checkoutService.GetDiscountRules();
             return Ok(discounts);
+        }
+
+        /// <summary>
+        /// Performs a HTTP GET request to get the list of available measurment units.
+        /// </summary>
+        /// <returns>
+        /// A HTTP status code 200 OK and the measurment units list
+        /// if the operation is successful; otherwise 404 NOT FOUND.
+        /// </returns>
+        [HttpGet("measurmentUnits")]
+        public IActionResult GetMeasurmentUnits()
+        {
+            System.Collections.Generic.IList<string> measurmentUnits = _productsService.GetMeasurmentUnits();
+            return Ok(measurmentUnits);
         }
 
         /// <summary>

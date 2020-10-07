@@ -15,7 +15,7 @@
     <tbody>
       <tr *ngFor="let product of products; index as i">
         <td>{{product.name}}</td>
-        <td>{{product.unitPrice | currency}} / {{units[product.measurmentUnit].toLowerCase()}}</td>
+        <td>{{product.unitPrice | currency}} / {{units[product.measurmentUnit]}}</td>
         <td>
           <form [formGroup]="productForms[i]">
             <input type="number" size="10" formControlName="quantity" #quantity />
@@ -48,7 +48,7 @@
 <br />
 <br />
 <div class="checkout" *ngIf="checkout.checkoutItems.length > 0">
-  <h1>Checkout</h1>
+  <h1>Cart</h1>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -61,7 +61,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let ci of checkout.checkoutItems">
-        <td>{{ci.quantity}} ({{units[ci.product.measurmentUnit].toLowerCase()}})</td>
+        <td>{{ci.quantity}} ({{units[ci.product.measurmentUnit]}})</td>
         <td>{{ci.product.name}}</td>
         <td>{{ci.product.unitPrice | currency}}</td>
         <td *ngIf="ci.product.discountRule != null">{{ci.product.discountRule.description}}</td>

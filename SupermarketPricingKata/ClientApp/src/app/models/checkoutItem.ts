@@ -11,12 +11,11 @@
  */
 import { DiscountRule } from './discountRule';
 import { Product } from './product';
-import { MeasurmentUnits } from './measurmentUnits';
 
 export interface CheckoutItem {
     id?: number;
     product?: Product;
     quantity?: number;
-    buyUnit?: MeasurmentUnits;
+    buyUnit?: string;
     discountRule?: DiscountRule;
 }

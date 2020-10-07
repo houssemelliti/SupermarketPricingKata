@@ -10,12 +10,11 @@
  * Do not edit the class manually.
  */
 import { DiscountRule } from './discountRule';
-import { MeasurmentUnits } from './measurmentUnits';
 
 export interface Product { 
     sku?: number;
     name?: string;
     unitPrice?: number;
-    measurmentUnit?: MeasurmentUnits;
+    measurmentUnit?: string;
     discountRule?: DiscountRule;
 }

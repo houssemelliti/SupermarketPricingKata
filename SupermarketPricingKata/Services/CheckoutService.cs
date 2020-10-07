@@ -54,19 +54,18 @@ namespace SupermarketPricingKata.Services
             {
                 try
                 {
-                    // get the quantity corresponding to the sell unit
-                    quantity = GetQuantityFromUnit(quantity, product.MeasurmentUnit, buyUnit);
+                    // get the quantity corresponding to the sell unit, rounded to 3 decimals
+                    quantity = Math.Round(GetQuantityFromUnit(quantity, product.MeasurmentUnit, buyUnit), 3);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     throw new ArgumentException(e.Message + $": Sell Unit {product.MeasurmentUnit}, Buy Unit {buyUnit}");
                 }
             }
 
-            if(discountRule != null)
+            if (discountRule != null)
             {
                 discountRule = ConfigureDiscountRuleParams(discountRule.Id, product.UnitPrice);
-                
             }
 
             // Finally add a "quantity" of this product to the list of 
@@ -145,6 +144,7 @@ namespace SupermarketPricingKata.Services
             return totalPrice;
         }
 
+        // Set the discount rule price based on the product unit price
         private DiscountRule ConfigureDiscountRuleParams(int id, decimal unitPrice)
         {
             var discountRule = GetDiscountRule(id);

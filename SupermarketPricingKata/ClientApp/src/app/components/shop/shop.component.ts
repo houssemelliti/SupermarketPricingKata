@@ -4,7 +4,6 @@ import { BehaviorSubject } from "rxjs";
 import { CheckoutService } from "../../services/checkout.service";
 import { FormControlService } from '../../services/form-control.service';
 import { Product, DiscountRule, Checkout, CheckoutItem } from 'src/app/models/models';
-enum MeasurmentUnits { "PIECE", "POUND", "OUNCE", "LITRE", "MILLILITRE", "GALLON", "METRE", "KILOGRAM", "GRAM" }
 
 @Component({
   selector: 'app-shop',
@@ -18,7 +17,8 @@ export class ShopComponent implements OnInit {
   public checkout: Checkout;
   public discountRules: DiscountRule[];
   public update = new BehaviorSubject<boolean>(false); // Needed to auto-update the checkout object
-  units = MeasurmentUnits;
+
+  units: any = {};
   defaultDiscount = [{ id: 0, description: 'None', price: 0, quantity: 0 }];
   showError = false;
 
@@ -32,6 +32,11 @@ export class ShopComponent implements OnInit {
     this.chechkoutService.getProducts().subscribe(result => {
       this.products = result;
       this.initializeForms();
+    });
+
+    // Get the list of available measurment units
+    this.chechkoutService.getMeasurmentUnits().subscribe(result => {
+      result.forEach((unit: string, index) => this.units[index] = unit.toLowerCase());
     });
 
     // Get the list of available discount rules for products
@@ -50,9 +55,11 @@ export class ShopComponent implements OnInit {
   initializeForms() {
     this.products.forEach(p => {
       let productForm: FormGroup = new FormGroup({});
+
       productForm = this.formService.createProductForm();
       productForm.patchValue({ buyUnit: p.measurmentUnit }); // set default buy units
-      if (p.measurmentUnit == MeasurmentUnits.PIECE) {
+
+      if (Object.keys(this.units).length > 0 && this.units[p.measurmentUnit] == "piece") {
         // disable buy unit choice when product is sold by piece 
         productForm.controls.buyUnit.disable();
       }

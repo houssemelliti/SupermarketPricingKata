@@ -20,5 +20,11 @@ namespace SupermarketPricingKata.Services
         /// <param name="sku">Stock keeping unit or product identifier.</param>
         /// <returns>A <see cref="Product"/> object.</returns>
         Product GetProduct(int sku);
+
+        /// <summary>
+        /// Gets the list of available measurment units.
+        /// </summary>
+        /// <returns>A list of <see cref="string"/> containing the measurment units.</returns>
+        public IList<string> GetMeasurmentUnits();
     }
 }
