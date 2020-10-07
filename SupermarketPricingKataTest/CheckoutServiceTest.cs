@@ -145,7 +145,7 @@ namespace SupermarketPricingKataTest
         /// for a single item in checkout.
         /// </summary>
         [Fact]
-        public void Test_CanCalculateTotalSingleItemPerNumber()
+        public void Test_CanCalculateTotalSingleItemPerPiece()
         {
             var checkoutService = Subject();
             checkoutService.AddItemToCheckout(1, 10, MeasurmentUnits.PIECE, null); // adding 10 items with product SKU = 1 and unit price = $0.4
@@ -154,19 +154,23 @@ namespace SupermarketPricingKataTest
 
         /// <summary>
         /// Verify that total price is calculated properly
-        /// for items sold per weight.
+        /// for items sold per weight or by volume.
         /// </summary>
-        [Fact]
-        public void Test_CanCalculateTotalSingleItemPerWeight()
+        [Theory]
+        [InlineData(3, 2, MeasurmentUnits.POUND, 3.98)]         // item with SKU = 3 costs $1.99/pound (so what does 2 pounds cost?)
+        [InlineData(3, 4, MeasurmentUnits.OUNCE, 0.5)]          // item with SKU = 3 costs $1.99/pound (so what does 4 ounces cost?)
+        [InlineData(3, 200, MeasurmentUnits.GRAM, 0.88)]        // item with SKU = 3 costs $1.99/pound (so what does 200 grams cost?)
+        [InlineData(3, 10, MeasurmentUnits.KILOGRAM, 43.87)]    // item with SKU = 3 costs $1.99/pound (so what does 10 kilograms cost?)
+        [InlineData(4, 5, MeasurmentUnits.LITRE, 6.25)]      // item with SKU = 4 costs $1.25/litre (so what does 5 litres cost?)
+        [InlineData(4, 3, MeasurmentUnits.GALLON, 14.2)]     // item with SKU = 4 costs $1.25/litre (so what does 3 gallons cost?)
+        [InlineData(4, 800, MeasurmentUnits.MILLILITRE, 1)]  // item with SKU = 4 costs $1.25/litre (so what does 800 millilitres cost?)
+        public void Test_CanCalculateTotalSingleItemPerWeightOrVolume(int id, decimal quantity, MeasurmentUnits buyUnit, decimal expectedPrice)
         {
             var checkoutService = Subject();
-
-            // item with SKU = 3 costs $1.99/pound (so what does 4 ounces cost?)
-            // setting buy unit to ounces while sale unit is pound
-            checkoutService.AddItemToCheckout(3, 4, MeasurmentUnits.OUNCE, null);
-
-            // We expect 4 oz price to be equal to $0.5
-            Assert.Equal(0.5m, checkoutService.CalculateTotal());
+            // add the sequence of inline data 
+            checkoutService.AddItemToCheckout(id, quantity, buyUnit, null);
+            // verify that the calulated price is equal to the expected price
+            Assert.Equal(expectedPrice, checkoutService.CalculateTotal());
         }
 
         /// <summary>
