@@ -4,7 +4,7 @@ import { BehaviorSubject } from "rxjs";
 import { CheckoutService } from "../../services/checkout.service";
 import { FormControlService } from '../../services/form-control.service';
 import { Product, DiscountRule, Checkout, CheckoutItem } from 'src/app/models/models';
-enum MeasurmentUnits { "UNIT", "POUND", "LITRE", "METRE", "GRAM" }
+enum MeasurmentUnits { "PIECE", "POUND", "OUNCE", "LITRE", "METRE", "KILOGRAM", "GRAM" }
 
 @Component({
   selector: 'app-shop',
@@ -20,6 +20,7 @@ export class ShopComponent implements OnInit {
   public update = new BehaviorSubject<boolean>(false); // Needed to auto-update the checkout object
   units = MeasurmentUnits;
   defaultDiscount = [{ id: 0, description: 'None', price: 0, quantity: 0 }];
+  showError = false;
 
   constructor(private chechkoutService: CheckoutService, private formService: FormControlService) {
     // Initialize lists
@@ -50,6 +51,11 @@ export class ShopComponent implements OnInit {
     this.products.forEach(p => {
       let productForm: FormGroup = new FormGroup({});
       productForm = this.formService.createProductForm();
+      productForm.patchValue({ buyUnit: p.measurmentUnit }); // set default buy units
+      if (p.measurmentUnit == MeasurmentUnits.PIECE) {
+        // disable buy unit choice when product is sold by piece 
+        productForm.controls.buyUnit.disable();
+      }
       this.productForms.push(productForm);
     })
   }
@@ -65,8 +71,14 @@ export class ShopComponent implements OnInit {
       checkoutItem.discountRule = {} as DiscountRule;
       checkoutItem.discountRule.id = form.get('discount').value; // set the discount rule id
     }
+   
+    checkoutItem.buyUnit = form.get('buyUnit').value; // set the buy unit
+
     // Perform adding the created item to the checkout through HTTP
-    this.chechkoutService.addItemToCheckout(checkoutItem).subscribe(() => this.update.next(true));
+    this.chechkoutService.addItemToCheckout(checkoutItem).subscribe(() => {
+      this.update.next(true);
+      this.showError = false;
+    }, error => this.showError = true);
   }
 
   getCheckout() {

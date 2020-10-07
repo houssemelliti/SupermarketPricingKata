@@ -278,12 +278,18 @@ namespace SupermarketPricingKataTest
         private void SetupMockObjects()
         {
             // Setting-up the CheckoutRepository mock object to imitate adding a CheckoutItem object to the list
-            _checkoutRepoMock.Setup(r => r.AddItem(It.IsAny<Product>(), It.IsAny<decimal>(), It.IsAny<DiscountRule>()))
-                .Callback<Product, decimal, DiscountRule>((product, quantity, rule) =>
+            _checkoutRepoMock.Setup(r => r.AddItem(It.IsAny<Product>(), It.IsAny<decimal>(), It.IsAny<MeasurmentUnits>(), It.IsAny<DiscountRule>()))
+                .Callback<Product, decimal, MeasurmentUnits, DiscountRule>((product, quantity, buyUnit, rule) =>
                 {
                     // using the provided parameters to the mock to create a CheckoutItem and add it to the list
                     product.DiscountRule = rule;
-                    var checkoutItem = new CheckoutItem { Product = product, Quantity = quantity, Price = product.UnitPrice * quantity };
+                    var checkoutItem = new CheckoutItem 
+                    { 
+                        Product = product,
+                        Quantity = quantity,
+                        BuyUnit = buyUnit,
+                        Price = product.UnitPrice * quantity 
+                    };
                     _checkoutItems.Add(checkoutItem);
                 });
 

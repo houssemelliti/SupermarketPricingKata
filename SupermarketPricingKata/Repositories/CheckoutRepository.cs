@@ -10,12 +10,18 @@ namespace SupermarketPricingKata.Repositories
         // This could be replaced by a database connection
         private static IList<CheckoutItem> _checkoutItems = new List<CheckoutItem>();
         private static int _id = 0;
-        public void AddItem(Product product, decimal quantity, DiscountRule discountRule)
+        public void AddItem(Product product, decimal quantity, MeasurmentUnits buyUnit, DiscountRule discountRule)
         {
             product.DiscountRule = discountRule;
 
             // create a CheckoutItem object from the provided parameters
-            var checkoutItem = new CheckoutItem { Product = product, Quantity = quantity, Price = product.UnitPrice * quantity };
+            var checkoutItem = new CheckoutItem 
+            { 
+                Product = product, 
+                Quantity = quantity,
+                BuyUnit = buyUnit,
+                Price = product.UnitPrice * quantity 
+            };
 
             // Set a unique ID and increment the static counter
             checkoutItem.Id = _id;

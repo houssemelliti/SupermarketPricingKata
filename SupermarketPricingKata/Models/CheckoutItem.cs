@@ -19,7 +19,12 @@
         /// Quantity of product to be added.
         /// </summary>
         public decimal Quantity { get; set; }
-        
+
+        /// <summary>
+        /// Models the buy measurment unit. 
+        /// </summary>
+        public MeasurmentUnits BuyUnit { get; set; }
+
         /// <summary>
         /// Total price for the checkout item.
         /// </summary>

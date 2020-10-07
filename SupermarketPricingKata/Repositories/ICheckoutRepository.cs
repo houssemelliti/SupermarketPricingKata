@@ -25,8 +25,9 @@ namespace SupermarketPricingKata.Repositories
         /// </summary>
         /// <param name="product">The product to add to the checkout.</param>
         /// <param name="quantity">The number, weight or volume of the product to be added to the checkout.</param>
+        /// <param name="buyUnit">The measurment unit for buy operation.</param>
         /// <param name="discountRule">The discount rule to be applied on the product. This parameter can be null.</param>
-        void AddItem(Product product, decimal quantity, DiscountRule discountRule);
+        void AddItem(Product product, decimal quantity, MeasurmentUnits buyUnit, DiscountRule discountRule);
 
         /// <summary>
         /// Deletes a checkout item from the checkout list.

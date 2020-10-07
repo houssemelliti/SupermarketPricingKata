@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SupermarketPricingKata.Models;
 using SupermarketPricingKata.Services;
 using SupermarketPricingKata.ViewModels;
 
@@ -92,7 +93,7 @@ namespace SupermarketPricingKata.Controllers
         [HttpPost("addToCart")]
         public IActionResult AddItemToCheckout([FromBody] DiscountedCheckoutItem item)
         {
-            _checkoutService.AddItemToCheckout(item.Product.Sku, item.Quantity, item.DiscountRule);
+            _checkoutService.AddItemToCheckout(item.Product.Sku, item.Quantity, item.BuyUnit, item.DiscountRule);
             return CreatedAtAction(
                 "GetCheckoutItem",
                 new { id = item.Product.Sku },

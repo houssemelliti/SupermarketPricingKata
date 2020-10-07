@@ -9,12 +9,14 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { ShopComponent } from './components/shop/shop.component';
 import { CheckoutService } from './services/checkout.service';
 import { FormControlService } from './services/form-control.service';
+import { EnumToArrayPipe } from './pipes/enum-to-array.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     ShopComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    EnumToArrayPipe
   ],
   imports: [
     BrowserModule,

@@ -10,4 +10,4 @@
  * Do not edit the class manually.
  */
 
-export enum MeasurmentUnits { "UNIT", "POUND", "LITRE", "METRE", "GRAM" }
+export enum MeasurmentUnits { "PIECE", "POUND", "OUNCE", "LITRE", "METRE", "KILOGRAM", "GRAM" }

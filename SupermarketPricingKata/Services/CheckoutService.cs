@@ -59,7 +59,7 @@ namespace SupermarketPricingKata.Services
                 }
                 catch(Exception e)
                 {
-                    throw new ArgumentException(e.Message);
+                    throw new ArgumentException(e.Message + $": Sell Unit {product.MeasurmentUnit}, Buy Unit {buyUnit}");
                 }
             }
 
@@ -71,7 +71,7 @@ namespace SupermarketPricingKata.Services
 
             // Finally add a "quantity" of this product to the list of 
             // checkout items if all the checking conditions are met
-            _checkoutRepo.AddItem(product, quantity, discountRule);
+            _checkoutRepo.AddItem(product, quantity, buyUnit, discountRule);
         }
 
         // returns the quantity equivalent to sell unit based on the buy unit

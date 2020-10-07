@@ -1,4 +1,5 @@
-﻿using SupermarketPricingKata.Models;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SupermarketPricingKata.Models;
 
 namespace SupermarketPricingKata.ViewModels
 {
@@ -16,6 +17,11 @@ namespace SupermarketPricingKata.ViewModels
         /// Models the quantity of <see cref="Models.Product"/> to be added to checkout.
         /// </summary>
         public decimal Quantity { get; set; }
+
+        /// <summary>
+        /// Models the buy measurment unit. 
+        /// </summary>
+        public MeasurmentUnits BuyUnit { get; set; }
 
         /// <summary>
         /// Models the <see cref="Models.DiscountRule"/> object associated with the <see cref="Models.Product"/>.

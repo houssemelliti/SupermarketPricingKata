@@ -1,4 +1,7 @@
 <h1>Shop</h1>
+  <div *ngIf="showError" class="alert alert-danger" role="alert">
+    Product was not added to the cart. Please, try again!
+  </div>
   <table class="table table-striped" *ngIf="products">
     <thead>
       <tr>
@@ -15,7 +18,12 @@
         <td>{{product.unitPrice | currency}} / {{units[product.measurmentUnit].toLowerCase()}}</td>
         <td>
           <form [formGroup]="productForms[i]">
-            <input type="number" size="10" formControlName="quantity" #quantity/>
+            <input type="number" size="10" formControlName="quantity" #quantity />
+            <select formControlName="buyUnit" style="margin-left: 5%;">
+              <option *ngFor="let unit of units | enumToArray" [ngValue]="unit.index">
+                {{unit.name.toLowerCase()}}
+              </option>
+            </select>
           </form>
         </td>
         <td>
@@ -53,7 +61,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let ci of checkout.checkoutItems">
-        <td>{{ci.quantity}}</td>
+        <td>{{ci.quantity}} ({{units[ci.product.measurmentUnit].toLowerCase()}})</td>
         <td>{{ci.product.name}}</td>
         <td>{{ci.product.unitPrice | currency}}</td>
         <td *ngIf="ci.product.discountRule != null">{{ci.product.discountRule.description}}</td>
