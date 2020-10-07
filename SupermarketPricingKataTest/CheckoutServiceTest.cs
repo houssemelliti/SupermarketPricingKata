@@ -50,7 +50,7 @@ namespace SupermarketPricingKataTest
         {
             var checkoutService = Subject();
             // Performing the checkoutService call to add 4 Bread items to the checkout
-            checkoutService.AddItemToCheckout(1, 4, null);
+            checkoutService.AddItemToCheckout(1, 4, MeasurmentUnits.PIECE, null);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace SupermarketPricingKataTest
         {
             var checkoutService = Subject();
             // adding an item with SKU = 10 and expecting to get an exeption since there is no product with this SKU
-            Assert.Throws<ArgumentException>(() => checkoutService.AddItemToCheckout(10, 1, null));
+            Assert.Throws<ArgumentException>(() => checkoutService.AddItemToCheckout(10, 1, MeasurmentUnits.PIECE, null));
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace SupermarketPricingKataTest
                 UnitPrice = 0, 
                 MeasurmentUnit = MeasurmentUnits.LITRE 
             });
-            Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.AddItemToCheckout(1, 1, null));
+            Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.AddItemToCheckout(1, 1, MeasurmentUnits.PIECE, null));
         }
 
         /// <summary>
@@ -93,10 +93,10 @@ namespace SupermarketPricingKataTest
             var checkoutService = Subject();
 
             // Check exeption is thrown when adding an item with negative quantity
-            Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.AddItemToCheckout(1, -3, null));
+            Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.AddItemToCheckout(1, -3, MeasurmentUnits.PIECE, null));
             
             // Check exeption is thrown when adding an item with zero quantity
-            Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.AddItemToCheckout(1, 0, null));
+            Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.AddItemToCheckout(1, 0, MeasurmentUnits.PIECE, null));
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace SupermarketPricingKataTest
             var checkoutService = Subject();
             // Testing with an item with SKU = 1 with measurment unit UNIT (item is sold by number) 
             // Try to add the item to the checkout with a 2.5 quantity
-            Assert.Throws<ArgumentException>(() => checkoutService.AddItemToCheckout(1, 2.5m, null));
+            Assert.Throws<ArgumentException>(() => checkoutService.AddItemToCheckout(1, 2.5m, MeasurmentUnits.PIECE, null));
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace SupermarketPricingKataTest
             var checkoutService = Subject();
 
             // First add the item to the checkout
-            checkoutService.AddItemToCheckout(3, 4, null);
+            checkoutService.AddItemToCheckout(3, 4, MeasurmentUnits.POUND, null);
 
             // Setting-up the CheckoutRepository mock object to imitate getting an exapmle checkoutItem
             var testItem = new CheckoutItem
@@ -148,7 +148,7 @@ namespace SupermarketPricingKataTest
         public void Test_CanCalculateTotalSingleItemPerNumber()
         {
             var checkoutService = Subject();
-            checkoutService.AddItemToCheckout(1, 10, null); // adding 10 items with product SKU = 1 and unit price = $0.4
+            checkoutService.AddItemToCheckout(1, 10, MeasurmentUnits.PIECE, null); // adding 10 items with product SKU = 1 and unit price = $0.4
             Assert.Equal(4, checkoutService.CalculateTotal()); // verify that total checkout price is $4
         }
 
@@ -162,11 +162,25 @@ namespace SupermarketPricingKataTest
             var checkoutService = Subject();
 
             // item with SKU = 3 costs $1.99/pound (so what does 4 ounces cost?)
-            // 4 oz is equal to 0.25 lb
-            checkoutService.AddItemToCheckout(3, 0.25m, null);
+            // setting buy unit to ounces while sale unit is pound
+            checkoutService.AddItemToCheckout(3, 4, MeasurmentUnits.OUNCE, null);
 
             // We expect 4 oz price to be equal to $0.5
             Assert.Equal(0.5m, checkoutService.CalculateTotal());
+        }
+
+        /// <summary>
+        /// Verify that ArgumentException is thrown when buy unit
+        /// is in a different category than sell unit.
+        /// </summary>
+        [Fact]
+        public void Test_ExceptionWhenIncompatibleUnits()
+        {
+            var checkoutService = Subject();
+
+            // item with SKU = 3 is sold per pound
+            // setting buy unit to litres while sale unit is pound and verify that exception is thrown
+            Assert.Throws<ArgumentException>(() => checkoutService.AddItemToCheckout(3, 4, MeasurmentUnits.LITRE, null));
         }
 
         /// <summary>
@@ -178,9 +192,9 @@ namespace SupermarketPricingKataTest
         {
             var checkoutService = Subject();
 
-            checkoutService.AddItemToCheckout(1, 2, null); // 2 Bread items
-            checkoutService.AddItemToCheckout(3, 0.5m, null); // 0,5 lb of Apples
-            checkoutService.AddItemToCheckout(4, 3, null); // 3L of Milk
+            checkoutService.AddItemToCheckout(1, 2, MeasurmentUnits.PIECE, null); // 2 Bread items
+            checkoutService.AddItemToCheckout(3, 0.5m, MeasurmentUnits.POUND, null); // 0,5 lb of Apples
+            checkoutService.AddItemToCheckout(4, 3, MeasurmentUnits.LITRE, null); // 3L of Milk
 
             Assert.Equal(5.54m, checkoutService.CalculateTotal());
         }
@@ -194,7 +208,7 @@ namespace SupermarketPricingKataTest
             var checkoutService = Subject();
             
             // Adding 8 Bread items with unit price $0.4 to the checkout with rule "Three for a dollar"
-            checkoutService.AddItemToCheckout(1, 8, checkoutService.GetDiscountRule(1));
+            checkoutService.AddItemToCheckout(1, 8, MeasurmentUnits.PIECE, checkoutService.GetDiscountRule(1));
             // Verify that 6 bread items are subject to discount with rule "Three for a dollar"
             // and 2 items are excluded from discount
             Assert.Equal(2.8m, checkoutService.CalculateTotal());
@@ -211,13 +225,13 @@ namespace SupermarketPricingKataTest
             var checkoutService = Subject();
 
             // Adding 4 Bread items to the checkout list with rule "Three for a dollar"
-            checkoutService.AddItemToCheckout(1, 4, checkoutService.GetDiscountRule(1));
+            checkoutService.AddItemToCheckout(1, 4, MeasurmentUnits.PIECE, checkoutService.GetDiscountRule(1));
 
             // Adding 5 Apples to the checkout list with rule "Buy two, get one free"
-            checkoutService.AddItemToCheckout(3, 5, checkoutService.GetDiscountRule(2));
+            checkoutService.AddItemToCheckout(3, 5, MeasurmentUnits.POUND, checkoutService.GetDiscountRule(2));
 
             // Adding 2.5L of Milk to the checkout list with rule "80% Off"
-            checkoutService.AddItemToCheckout(4, 2.5m, checkoutService.GetDiscountRule(3));
+            checkoutService.AddItemToCheckout(4, 2.5m, MeasurmentUnits.LITRE, checkoutService.GetDiscountRule(3));
 
             // Expect the discount to be applied on each product 
             // and total price to be calculated properly
@@ -235,7 +249,7 @@ namespace SupermarketPricingKataTest
             
             var rule = checkoutService.GetDiscountRule(1); // Get the rule "Three for a dollar" object 
             rule.Quantity = 0; // The discount quantity is set to zero
-            checkoutService.AddItemToCheckout(1, 8, rule); // Adding 8 Bread items to the checkout with rule "Three for a dollar"
+            checkoutService.AddItemToCheckout(1, 8, MeasurmentUnits.PIECE, rule); // Adding 8 Bread items to the checkout with rule "Three for a dollar"
 
             // Expect an exception to be thrown
             Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.CalculateTotal());
@@ -252,7 +266,7 @@ namespace SupermarketPricingKataTest
 
             // Adding 8 Bread items to the checkout
             // The discount rule price is negative
-            checkoutService.AddItemToCheckout(1, 8, checkoutService.GetDiscountRule(5));
+            checkoutService.AddItemToCheckout(1, 8, MeasurmentUnits.PIECE, checkoutService.GetDiscountRule(5));
 
             // Expect an exception to be thrown
             Assert.Throws<ArgumentOutOfRangeException>(() => checkoutService.CalculateTotal());
@@ -286,7 +300,7 @@ namespace SupermarketPricingKataTest
                 Sku = 1,
                 Name = "Bread",
                 UnitPrice = 0.4m,
-                MeasurmentUnit = MeasurmentUnits.UNIT
+                MeasurmentUnit = MeasurmentUnits.PIECE
             });
 
             // Setting-up the ProductsRepository mock object to imitate getting an exapmle product with SKU = 3
