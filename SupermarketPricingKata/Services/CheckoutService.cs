@@ -74,57 +74,6 @@ namespace SupermarketPricingKata.Services
             _checkoutRepo.AddItem(product, quantity, buyUnit, discountRule);
         }
 
-        // returns the quantity equivalent to sell unit based on the buy unit
-        private decimal GetQuantityFromUnit(decimal quantity, MeasurmentUnits saleUnit, MeasurmentUnits buyUnit)
-        {
-            string message = "Not compatible mass units";
-            switch (saleUnit)
-            {
-                // Convert to pounds
-                case MeasurmentUnits.POUND:
-                    if (buyUnit == MeasurmentUnits.OUNCE)
-                        return MassConversion.OuncesToPounds(quantity);
-                    if (buyUnit == MeasurmentUnits.GRAM)
-                        return MassConversion.GramsToPounds(quantity);
-                    if (buyUnit == MeasurmentUnits.KILOGRAM)
-                        return MassConversion.KilogramsToPounds(quantity);
-                    else
-                        throw new ArgumentException(message);
-                // Convert to Kilograms
-                case MeasurmentUnits.KILOGRAM:
-                    if (buyUnit == MeasurmentUnits.GRAM)
-                        return MassConversion.GramsToKilograms(quantity);
-                    if (buyUnit == MeasurmentUnits.POUND)
-                        return MassConversion.PoundsToKilograms(quantity);
-                    if (buyUnit == MeasurmentUnits.OUNCE)
-                        return MassConversion.OuncesToKilograms(quantity);
-                    else
-                        throw new ArgumentException(message);
-                // Convert to Grams
-                case MeasurmentUnits.GRAM:
-                    if (buyUnit == MeasurmentUnits.OUNCE)
-                        return MassConversion.OuncesToGrams(quantity);
-                    if (buyUnit == MeasurmentUnits.POUND)
-                        return MassConversion.PoundsToGrams(quantity);
-                    if (buyUnit == MeasurmentUnits.KILOGRAM)
-                        return MassConversion.KilogramsToGrams(quantity);
-                    else
-                        throw new ArgumentException(message);
-                // Convert to ounces
-                case MeasurmentUnits.OUNCE:
-                    if (buyUnit == MeasurmentUnits.POUND)
-                        return MassConversion.PoundsToOunces(quantity);
-                    if (buyUnit == MeasurmentUnits.GRAM)
-                        return MassConversion.GramsToOunces(quantity);
-                    if (buyUnit == MeasurmentUnits.KILOGRAM)
-                        return MassConversion.KilogramsToOunces(quantity);
-                    else
-                        throw new ArgumentException(message);
-                default:
-                    throw new ArgumentException(message);
-            }
-        }
-
         public DiscountRule GetDiscountRule(int id)
         {
             return _discountsRepo.GetDiscountRule(id);
@@ -220,6 +169,80 @@ namespace SupermarketPricingKata.Services
                     break;
             }
             return discountRule;
+        }
+
+        // returns the quantity equivalent to sell unit based on the buy unit
+        private decimal GetQuantityFromUnit(decimal quantity, MeasurmentUnits saleUnit, MeasurmentUnits buyUnit)
+        {
+            string message = "Not compatible buy and sell units";
+            switch (saleUnit)
+            {
+                /***** Mass Conversion *****/
+                // Convert to pounds
+                case MeasurmentUnits.POUND:
+                    if (buyUnit == MeasurmentUnits.OUNCE)
+                        return MassConversion.OuncesToPounds(quantity);
+                    if (buyUnit == MeasurmentUnits.GRAM)
+                        return MassConversion.GramsToPounds(quantity);
+                    if (buyUnit == MeasurmentUnits.KILOGRAM)
+                        return MassConversion.KilogramsToPounds(quantity);
+                    else
+                        throw new ArgumentException(message);
+                // Convert to Kilograms
+                case MeasurmentUnits.KILOGRAM:
+                    if (buyUnit == MeasurmentUnits.GRAM)
+                        return MassConversion.GramsToKilograms(quantity);
+                    if (buyUnit == MeasurmentUnits.POUND)
+                        return MassConversion.PoundsToKilograms(quantity);
+                    if (buyUnit == MeasurmentUnits.OUNCE)
+                        return MassConversion.OuncesToKilograms(quantity);
+                    else
+                        throw new ArgumentException(message);
+                // Convert to Grams
+                case MeasurmentUnits.GRAM:
+                    if (buyUnit == MeasurmentUnits.OUNCE)
+                        return MassConversion.OuncesToGrams(quantity);
+                    if (buyUnit == MeasurmentUnits.POUND)
+                        return MassConversion.PoundsToGrams(quantity);
+                    if (buyUnit == MeasurmentUnits.KILOGRAM)
+                        return MassConversion.KilogramsToGrams(quantity);
+                    else
+                        throw new ArgumentException(message);
+                // Convert to ounces
+                case MeasurmentUnits.OUNCE:
+                    if (buyUnit == MeasurmentUnits.POUND)
+                        return MassConversion.PoundsToOunces(quantity);
+                    if (buyUnit == MeasurmentUnits.GRAM)
+                        return MassConversion.GramsToOunces(quantity);
+                    if (buyUnit == MeasurmentUnits.KILOGRAM)
+                        return MassConversion.KilogramsToOunces(quantity);
+                    else
+                        throw new ArgumentException(message);
+                /***** Volume Conversion *****/
+                case MeasurmentUnits.LITRE:
+                    if (buyUnit == MeasurmentUnits.GALLON)
+                        return VolumeConversion.GallonsToLitres(quantity);
+                    if (buyUnit == MeasurmentUnits.MILLILITRE)
+                        return VolumeConversion.MillilitresToLitres(quantity);
+                    else
+                        throw new ArgumentException(message);
+                case MeasurmentUnits.GALLON:
+                    if (buyUnit == MeasurmentUnits.LITRE)
+                        return VolumeConversion.LitresToGallons(quantity);
+                    if (buyUnit == MeasurmentUnits.MILLILITRE)
+                        return VolumeConversion.MillilitresToGallons(quantity);
+                    else
+                        throw new ArgumentException(message);
+                case MeasurmentUnits.MILLILITRE:
+                    if (buyUnit == MeasurmentUnits.LITRE)
+                        return VolumeConversion.LitresToMillilitres(quantity);
+                    if (buyUnit == MeasurmentUnits.GALLON)
+                        return VolumeConversion.GallonsToMillilitres(quantity);
+                    else
+                        throw new ArgumentException(message);
+                default:
+                    throw new ArgumentException(message);
+            }
         }
     }
 }

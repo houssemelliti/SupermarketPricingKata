@@ -4,7 +4,7 @@ import { BehaviorSubject } from "rxjs";
 import { CheckoutService } from "../../services/checkout.service";
 import { FormControlService } from '../../services/form-control.service';
 import { Product, DiscountRule, Checkout, CheckoutItem } from 'src/app/models/models';
-enum MeasurmentUnits { "PIECE", "POUND", "OUNCE", "LITRE", "METRE", "KILOGRAM", "GRAM" }
+enum MeasurmentUnits { "PIECE", "POUND", "OUNCE", "LITRE", "MILLILITRE", "GALLON", "METRE", "KILOGRAM", "GRAM" }
 
 @Component({
   selector: 'app-shop',
